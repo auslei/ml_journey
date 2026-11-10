@@ -32,3 +32,31 @@ def plot_decision_boundary(
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     return ax
+
+
+def plot_clusters(
+    x: np.ndarray,
+    labels: np.ndarray,
+    ax: Axes | None = None,
+    centers: np.ndarray | None = None,
+    title: str | None = None,
+) -> Axes:
+    """Scatter two-feature data coloured by cluster label. Label -1 (noise) is drawn grey.
+
+    ``centers`` is an optional (k, 2) array drawn as black crosses.
+    """
+    if x.ndim != 2 or x.shape[1] != 2:
+        raise ValueError(f"x must have exactly two columns, got shape {x.shape}")
+    if len(labels) != len(x):
+        raise ValueError(f"labels has {len(labels)} entries but x has {len(x)} rows")
+    if ax is None:
+        ax = plt.gca()
+    noise = labels == -1
+    ax.scatter(x[~noise, 0], x[~noise, 1], c=labels[~noise], cmap="tab10", vmin=0, vmax=9, s=18)
+    if noise.any():
+        ax.scatter(x[noise, 0], x[noise, 1], c="0.6", marker="x", s=18)
+    if centers is not None:
+        ax.scatter(centers[:, 0], centers[:, 1], c="k", marker="X", s=110, edgecolor="w")
+    if title:
+        ax.set_title(title)
+    return ax

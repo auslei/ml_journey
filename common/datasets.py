@@ -12,7 +12,16 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.datasets import fetch_california_housing, load_breast_cancer, load_digits, load_iris
+from sklearn.datasets import (
+    fetch_california_housing,
+    load_breast_cancer,
+    load_digits,
+    load_iris,
+    load_wine,
+    make_blobs,
+    make_circles,
+    make_moons,
+)
 from sklearn.utils import Bunch
 
 logger = logging.getLogger(__name__)
@@ -193,3 +202,96 @@ def make_credit_data(
     )
     x.loc[rng.uniform(size=n_samples) < 0.05, "employment_years"] = np.nan
     return x, y
+
+
+def _check_n_samples(n_samples: int) -> None:
+    if n_samples <= 0:
+        raise ValueError(f"n_samples must be positive, got {n_samples}")
+
+
+def _as_frame(x: np.ndarray, y: np.ndarray) -> tuple[pd.DataFrame, pd.Series]:
+    return pd.DataFrame(x, columns=["x1", "x2"]), pd.Series(y, name="label")
+
+
+def make_blobs_data(
+    n_samples: int = 300,
+    centers: int = 3,
+    cluster_std: float | list[float] = 1.0,
+    seed: int = 42,
+) -> tuple[pd.DataFrame, pd.Series]:
+    """Return 2D Gaussian blobs (columns x1, x2) and the blob each point came from."""
+    _check_n_samples(n_samples)
+    if centers < 1:
+        raise ValueError(f"centers must be at least 1, got {centers}")
+    x, y = make_blobs(
+        n_samples=n_samples, centers=centers, cluster_std=cluster_std, random_state=seed
+    )
+    return _as_frame(x, y)
+
+
+def make_moons_data(
+    n_samples: int = 300, noise: float = 0.08, seed: int = 42
+) -> tuple[pd.DataFrame, pd.Series]:
+    """Return two interleaved half-moons (columns x1, x2) and which moon each point is on."""
+    _check_n_samples(n_samples)
+    if noise < 0:
+        raise ValueError(f"noise must be non-negative, got {noise}")
+    x, y = make_moons(n_samples=n_samples, noise=noise, random_state=seed)
+    return _as_frame(x, y)
+
+
+def make_circles_data(
+    n_samples: int = 300, noise: float = 0.05, factor: float = 0.45, seed: int = 42
+) -> tuple[pd.DataFrame, pd.Series]:
+    """Return two concentric circles (columns x1, x2) and which ring each point is on."""
+    _check_n_samples(n_samples)
+    if noise < 0:
+        raise ValueError(f"noise must be non-negative, got {noise}")
+    if not 0 < factor < 1:
+        raise ValueError(f"factor must be in (0, 1), got {factor}")
+    x, y = make_circles(n_samples=n_samples, noise=noise, factor=factor, random_state=seed)
+    return _as_frame(x, y)
+
+
+def load_wine_data() -> tuple[pd.DataFrame, pd.Series]:
+    """Return the wine chemistry data (178 rows, 13 features) and cultivar codes 0, 1, 2."""
+    bunch = _load_bundled(load_wine, "wine")
+    return bunch.data, bunch.target.rename("cultivar")
+
+
+SEGMENTS = ("bargain hunters", "regulars", "big spenders", "new and light")
+
+
+def make_customer_data(n_samples: int = 1000, seed: int = 42) -> tuple[pd.DataFrame, pd.Series]:
+    """Return a synthetic customer table and the true segment code (index into ``SEGMENTS``).
+
+    Four segments with different spend, visit frequency, tenure, basket size and discount
+    use. Features sit on very different scales on purpose (dollars versus shares), so the
+    notebooks can show why scaling matters before clustering. Segment sizes are unequal.
+    """
+    _check_n_samples(n_samples)
+    rng = np.random.default_rng(seed)
+    share = np.array([0.30, 0.35, 0.10, 0.25])
+    seg = rng.choice(len(SEGMENTS), size=n_samples, p=share)
+    # per segment: mean annual spend, visits per month, tenure months, basket size, discount share
+    mean = np.array(
+        [
+            [900, 4.0, 30, 22, 0.70],
+            [2500, 6.0, 48, 45, 0.25],
+            [9000, 8.0, 60, 120, 0.10],
+            [400, 1.5, 4, 18, 0.35],
+        ]
+    )
+    sd = np.array(
+        [
+            [250, 1.0, 12, 6, 0.10],
+            [600, 1.2, 14, 10, 0.08],
+            [1800, 1.5, 15, 25, 0.05],
+            [150, 0.6, 2, 5, 0.12],
+        ]
+    )
+    x = rng.normal(mean[seg], sd[seg])
+    x[:, [0, 1, 2, 3]] = np.clip(x[:, [0, 1, 2, 3]], 1, None)
+    x[:, 4] = np.clip(x[:, 4], 0, 1)
+    cols = ["annual_spend", "visits_per_month", "tenure_months", "basket_size", "discount_share"]
+    return pd.DataFrame(x, columns=cols).round(2), pd.Series(seg, name="segment")

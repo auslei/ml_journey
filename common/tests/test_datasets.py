@@ -113,3 +113,47 @@ def test_credit_data_bad_input() -> None:
         datasets.make_credit_data(n_samples=0)
     with pytest.raises(ValueError):
         datasets.make_credit_data(default_rate=0.9)
+
+
+def test_2d_generators_shape_seed_and_labels() -> None:
+    for make in (datasets.make_blobs_data, datasets.make_moons_data, datasets.make_circles_data):
+        x1, y1 = make(n_samples=120, seed=3)
+        x2, y2 = make(n_samples=120, seed=3)
+        assert list(x1.columns) == ["x1", "x2"] and len(y1) == 120
+        assert x1.equals(x2) and y1.equals(y2)
+        assert not x1.equals(make(n_samples=120, seed=4)[0])
+    assert datasets.make_blobs_data(centers=4)[1].nunique() == 4
+    assert datasets.make_moons_data()[1].nunique() == 2
+
+
+def test_2d_generators_bad_input() -> None:
+    with pytest.raises(ValueError):
+        datasets.make_blobs_data(n_samples=0)
+    with pytest.raises(ValueError):
+        datasets.make_blobs_data(centers=0)
+    with pytest.raises(ValueError):
+        datasets.make_moons_data(noise=-0.1)
+    with pytest.raises(ValueError):
+        datasets.make_circles_data(factor=1.5)
+    with pytest.raises(ValueError):
+        datasets.make_circles_data(noise=-1)
+
+
+def test_wine_shape_and_failure() -> None:
+    x, y = datasets.load_wine_data()
+    assert x.shape == (178, 13) and set(y) == {0, 1, 2}
+
+
+def test_customer_data_segments_scales_and_seed() -> None:
+    x1, y1 = datasets.make_customer_data(n_samples=2000, seed=5)
+    x2, y2 = datasets.make_customer_data(n_samples=2000, seed=5)
+    assert x1.equals(x2) and y1.equals(y2)
+    assert set(y1) == {0, 1, 2, 3}
+    assert y1.value_counts().min() < y1.value_counts().max() / 2  # unequal sizes
+    assert x1["annual_spend"].mean() > 100 * x1["discount_share"].mean()  # different scales
+    assert x1["discount_share"].between(0, 1).all()
+
+
+def test_customer_data_bad_input() -> None:
+    with pytest.raises(ValueError):
+        datasets.make_customer_data(n_samples=0)
