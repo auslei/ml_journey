@@ -16,7 +16,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-torch = ["torch"]
+torch = ["torch", "torchvision", "keras>=3"]
 tf = ["tensorflow"]
 llm = ["transformers", "peft", "datasets"]
 

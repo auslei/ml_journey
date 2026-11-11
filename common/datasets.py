@@ -295,3 +295,52 @@ def make_customer_data(n_samples: int = 1000, seed: int = 42) -> tuple[pd.DataFr
     x[:, 4] = np.clip(x[:, 4], 0, 1)
     cols = ["annual_spend", "visits_per_month", "tenure_months", "basket_size", "discount_share"]
     return pd.DataFrame(x, columns=cols).round(2), pd.Series(seg, name="segment")
+
+
+def _load_torchvision_images(
+    name: str, n_train: int | None, n_test: int | None, seed: int
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Download a torchvision image dataset into ``data/`` and return seeded subsamples.
+
+    Images come back as float32 in [0, 1] with shape (n, h, w) or (n, h, w, c).
+    """
+    for label, n in (("n_train", n_train), ("n_test", n_test)):
+        if n is not None and n <= 0:
+            raise ValueError(f"{label} must be positive, got {n}")
+    try:
+        from torchvision import datasets
+    except ImportError as err:
+        raise DatasetError("torchvision is missing. Run `uv sync --extra torch`.") from err
+
+    cls = {"mnist": datasets.MNIST, "cifar10": datasets.CIFAR10}[name]
+    DATA_DIR.mkdir(exist_ok=True)
+    logger.info("Loading %s from %s", name, DATA_DIR)
+    try:
+        parts = [cls(DATA_DIR, train=train, download=True) for train in (True, False)]
+    except Exception as err:
+        raise DatasetError(f"Could not download {name}. Check your connection.") from err
+
+    rng = np.random.default_rng(seed)
+    out: list[np.ndarray] = []
+    for part, n in zip(parts, (n_train, n_test)):
+        x = np.asarray(part.data, dtype=np.float32) / 255.0
+        y = np.asarray(part.targets, dtype=np.int64)
+        if n is not None and n < len(x):
+            keep = np.sort(rng.choice(len(x), size=n, replace=False))
+            x, y = x[keep], y[keep]
+        out += [x, y]
+    return out[0], out[1], out[2], out[3]
+
+
+def load_mnist(
+    n_train: int | None = 5000, n_test: int | None = 1000, seed: int = 42
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Return MNIST as (x_train, y_train, x_test, y_test). Images are (n, 28, 28) in [0, 1]."""
+    return _load_torchvision_images("mnist", n_train, n_test, seed)
+
+
+def load_cifar10(
+    n_train: int | None = 5000, n_test: int | None = 1000, seed: int = 42
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Return CIFAR-10 as (x_train, y_train, x_test, y_test). Images are (n, 32, 32, 3)."""
+    return _load_torchvision_images("cifar10", n_train, n_test, seed)
