@@ -1,6 +1,6 @@
 # Progress and handoff
 
-Last updated: 2026-11-11. Branch: `consolidate-ml-journey` (not merged, not pushed).
+Last updated: 2026-11-11. Repo: https://github.com/auslei/ml_journey (public). Sections 01 to 05 are merged into `main` and pushed. Work on a new feature branch for section 06.
 
 ## Goal
 
@@ -42,7 +42,7 @@ Full suite: `uv run pytest` (96 passed, about 6 minutes on a CUDA machine), `uv 
 2. Section 07 LLM. Reuse `llm_finetune` (`src`, `scripts`, `tests`, notebooks) and the HuggingFace notebooks `h0` to `h2`. Add a concept notebook on tokenisation and LoRA. Do not copy model weights or data (402MB).
 3. Root `README.md`: roadmap and setup, written last.
 4. Deferred prose pass: 05 notebooks run 700 to 900 words against the 500 target, and 01 and 02 need the blog-quality pass. Notebook 11 (RNN and LSTM) has a seed-dependent result where the LSTM does not beat the vanilla RNN on the delayed-recall task. The prose reports it honestly, but a better task or training budget could be tried.
-5. Integration check, a voice read-through of all prose, then ask the user whether to merge to main and push. **Nothing has been merged or pushed. The user has not yet been asked about merging section 05.**
+5. Integration check, a voice read-through of all prose, then ask the user whether to merge to main and push. Sections 01 to 05 are on `main` (the user approved the merge and a public push on 2026-11-11). Ask again before each later merge or push.
 
 ## Lessons for the next run
 
@@ -56,7 +56,8 @@ Full suite: `uv run pytest` (96 passed, about 6 minutes on a CUDA machine), `uv 
 
 ```
 cd /home/anthony/github_backup/ml_journey
-git checkout consolidate-ml-journey
+git checkout main && git pull
+git checkout -b section-06-nlp
 uv sync --extra torch
 uv run pytest 05_deep_learning/intuition_test.ipynb
 ```
