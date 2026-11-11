@@ -14,11 +14,11 @@ One project that walks from linear algebra to LLM fine-tuning, as a personal ref
 | 02 probability | done | basics, Bayes, MLE/MAP bridge to ML |
 | 03 classical ML | done | regression (part A) and classification, trees, ensembles, metrics, scorecard (part B) |
 | 04 unsupervised | done | k-means, hierarchical, DBSCAN, GMM, PCA, t-SNE, UMAP, evaluation |
-| 05 deep learning | done | 12 notebooks plus intuition test, TensorFlow appendix in its own env (see decisions) |
+| 05 deep learning | done | 12 notebooks, intuition test, README, TensorFlow appendix in its own env (see decisions) |
 | 06 NLP | not started | |
 | 07 LLM | not started | |
 
-Full suite: `uv run pytest` (96 passed, about 6 minutes on a CUDA machine), `uv run ruff check .` and `uv run ruff format --check .` clean.
+Full suite: `uv run pytest` (96 passed, about 6 minutes on a CUDA machine), `uv run ruff check .` and `uv run ruff format --check .` clean. Last commit: `dc4bafc`. The appendix passes separately in `.venv-tf` (1 test).
 
 ## Decisions made
 
@@ -33,19 +33,39 @@ Full suite: `uv run pytest` (96 passed, about 6 minutes on a CUDA machine), `uv 
 
 ## Next steps
 
-1. Section 05 is done. Open item: a deeper prose pass on 05 (notebooks run 700 to 900 words against the 500 target) and notebook 11, where the LSTM does not beat the vanilla RNN on the delayed-recall task (seed-dependent, reported honestly in the prose).
-2. Section 06 NLP. Reuse the C3 and C4 RNN NLP notebooks from `machine_learning_deep_learning`, `Word-Embedding` (CBOW, skip-gram), `python_gensim_nlp` (LDA, Word2Vec), `auto_regressive_model`, and `python_topic_modelling`. Add a short attention and transformer notebook.
-3. Section 07 LLM. Reuse `llm_finetune` (`src`, `scripts`, `tests`, notebooks) and the HuggingFace notebooks `h0` to `h2`. Add a concept notebook on tokenisation and LoRA. Do not copy model weights or data (402MB).
-4. Root `README.md`: roadmap and setup, written last.
-5. Integration check, a voice read-through of all prose, then ask the user whether to merge to main and push.
+1. **Section 06 NLP. Write the plan first and get it confirmed** (CLAUDE.md workflow). Proposed parts, one sub-agent each, run in order:
+   - 06a: text basics and embeddings. Reuse `Word-Embedding` (CBOW, skip-gram) and `python_gensim_nlp` (Word2Vec).
+   - 06b: topic models and language models. Reuse `python_gensim_nlp` (LDA), `python_topic_modelling` and `auto_regressive_model`.
+   - 06c: sequence models on text (the C3 and C4 RNN notebooks from `machine_learning_deep_learning`, deliberately left out of 05) plus a short attention and transformer notebook.
+   - Native PyTorch for everything in 06. Read the source notebooks before planning. Watch for large stored outputs and downloads.
+   - Add the `llm` extra only when 07 needs it. Check it does not clash with `umap` or `torch`.
+2. Section 07 LLM. Reuse `llm_finetune` (`src`, `scripts`, `tests`, notebooks) and the HuggingFace notebooks `h0` to `h2`. Add a concept notebook on tokenisation and LoRA. Do not copy model weights or data (402MB).
+3. Root `README.md`: roadmap and setup, written last.
+4. Deferred prose pass: 05 notebooks run 700 to 900 words against the 500 target, and 01 and 02 need the blog-quality pass. Notebook 11 (RNN and LSTM) has a seed-dependent result where the LSTM does not beat the vanilla RNN on the delayed-recall task. The prose reports it honestly, but a better task or training budget could be tried.
+5. Integration check, a voice read-through of all prose, then ask the user whether to merge to main and push. **Nothing has been merged or pushed. The user has not yet been asked about merging section 05.**
+
+## Lessons for the next run
+
+- The coordinator re-runs `uv run pytest` and ruff after every sub-agent, then commits. Sub-agent reports have matched so far, but check anyway.
+- The full suite takes about 6 minutes, so run it in the background. First-time dataset downloads are slow (CIFAR-10 took about 15 minutes once). They are cached in `data/` now, but a fresh clone will hit them again.
+- `nbconvert` is not installed. To see notebook outputs, run the notebook with `nbclient.NotebookClient` or just run `pytest` on it.
+- Do not import torch and TensorFlow-dependent libraries carelessly. Anything that needs TensorFlow goes in the `.venv-tf` environment only.
+- Prose numbers must come from a real run. Notebooks are stored stripped, so quote numbers only after executing them. Hedge CPU/GPU differences.
 
 ## How to resume
 
 ```
 cd /home/anthony/github_backup/ml_journey
 git checkout consolidate-ml-journey
-uv sync
-uv run pytest 01_linear_algebra_calculus
+uv sync --extra torch
+uv run pytest 05_deep_learning/intuition_test.ipynb
 ```
 
-Then ask Claude to read `CLAUDE.md` and this file, and continue with section 05. Workflow in use: one sub-agent per part, run sequentially, each owns its tests, and the coordinator re-runs the gates before committing.
+Optional, only to run the TensorFlow appendix:
+
+```
+UV_PROJECT_ENVIRONMENT=.venv-tf uv sync --extra torch --extra tf
+UV_PROJECT_ENVIRONMENT=.venv-tf uv run --extra torch --extra tf pytest 05_deep_learning/appendix
+```
+
+Then ask Claude to read `CLAUDE.md` and this file, and plan section 06. Workflow in use: plan, confirm, one sub-agent per part run sequentially, each owns its tests, and the coordinator re-runs the gates before committing.
