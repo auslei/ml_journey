@@ -60,3 +60,23 @@ def plot_clusters(
     if title:
         ax.set_title(title)
     return ax
+
+
+def plot_history(
+    history: dict[str, list[float]],
+    keys: tuple[str, ...] = ("loss", "val_loss"),
+    ax: Axes | None = None,
+    title: str = "",
+) -> Axes:
+    """Plot training curves from a Keras ``History.history`` dict, one line per key."""
+    missing = [k for k in keys if k not in history]
+    if missing:
+        raise KeyError(f"History has no {missing}. Available keys: {sorted(history)}")
+    if ax is None:
+        ax = plt.gca()
+    for key in keys:
+        ax.plot(range(1, len(history[key]) + 1), history[key], label=key)
+    ax.set_xlabel("epoch")
+    ax.set_title(title)
+    ax.legend()
+    return ax

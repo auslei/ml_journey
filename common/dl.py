@@ -6,6 +6,8 @@ Call ``setup_keras()`` before the first ``import keras`` so Keras 3 runs on the 
 import logging
 import os
 import random
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -57,3 +59,29 @@ def set_seed(seed: int = 42) -> None:
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+
+
+def weight_gradient_norms(
+    model: Any, x: np.ndarray, y: np.ndarray, loss_fn: Callable
+) -> dict[str, float]:
+    """Return the gradient norm of every weight matrix for one batch.
+
+    Works for a torch module or a Keras 3 model on the torch backend. ``loss_fn`` takes
+    ``(output, target)`` torch tensors and returns a scalar loss. Biases (1D) are skipped.
+    """
+    import torch
+
+    params = [(n, p) for n, p in model.named_parameters() if p.ndim >= 2]
+    if not params:
+        raise ValueError("The model has no weight matrices to measure.")
+    if len(x) != len(y):
+        raise ValueError(f"x and y must have the same length, got {len(x)} and {len(y)}")
+    device = params[0][1].device
+    x_t = torch.as_tensor(x, dtype=torch.float32, device=device)
+    y_t = torch.as_tensor(y, device=device)
+    model.zero_grad()
+    logger.info("Measuring gradient norms on a batch of %d rows", len(x))
+    loss_fn(model(x_t), y_t).backward()
+    norms = {n: float(p.grad.norm()) for n, p in params if p.grad is not None}
+    model.zero_grad()
+    return norms

@@ -40,3 +40,18 @@ def test_cluster_plot_rejects_bad_input() -> None:
         plot_clusters(np.zeros((5, 3)), np.zeros(5))
     with pytest.raises(ValueError, match="labels"):
         plot_clusters(np.zeros((5, 2)), np.zeros(4))
+
+
+def test_history_plot_draws_one_line_per_key() -> None:
+    from common.plotting import plot_history
+
+    ax = plot_history({"loss": [3, 2, 1], "val_loss": [3, 2.5, 2]}, ax=plt.subplots()[1], title="t")
+    assert len(ax.lines) == 2
+    assert ax.get_title() == "t"
+
+
+def test_history_plot_rejects_missing_key() -> None:
+    from common.plotting import plot_history
+
+    with pytest.raises(KeyError, match="accuracy"):
+        plot_history({"loss": [1.0]}, keys=("accuracy",))

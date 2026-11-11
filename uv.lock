@@ -747,6 +747,23 @@ wheels = [
 ]
 
 [[package]]
+name = "keras-tuner"
+version = "1.4.8"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "grpcio" },
+    { name = "keras" },
+    { name = "kt-legacy" },
+    { name = "packaging" },
+    { name = "protobuf" },
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5a/44/79b36980769f401ec6e1d6ca72b6c129d3a05a365f00c69ef80335089b37/keras_tuner-1.4.8.tar.gz", hash = "sha256:809e78538ea5c8e048012ef1d680712d56f28cf9dfa4938a2daace1ab30c4828", size = 80348, upload-time = "2025-11-11T05:34:03.84Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/17/2e/282910a9da95625b4b7cd5c93ce81ee8f0a4fad125e9a2e5c2e249eb8cbb/keras_tuner-1.4.8-py3-none-any.whl", hash = "sha256:53034e71608051a17c7f764f282e1e54b52c4d69c05a30f1e8891c8e5ea7739f", size = 129418, upload-time = "2025-11-11T05:34:02.305Z" },
+]
+
+[[package]]
 name = "kiwisolver"
 version = "1.5.1"
 source = { registry = "https://pypi.org/simple" }
@@ -770,6 +787,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/a9/c4/1407df7512a5b36cc79840e01710dc575733c461b13ab866cae77eaf87f3/kiwisolver-1.5.1-graalpy312-graalpy250_312_native-macosx_11_0_arm64.whl", hash = "sha256:482676e5bd48d70ac99d9fc78863469845421e01184fa83f1f9366dc49f7e974", size = 134002, upload-time = "2026-08-28T10:28:08.881Z" },
     { url = "https://files.pythonhosted.org/packages/16/45/c37a21ad5c0ab581a93c55ad544721aaa1f0ae94edb29c6a678a23d013e6/kiwisolver-1.5.1-graalpy312-graalpy250_312_native-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:072bdb15a3c19a5b5dbc8f8fb1f4e1884bf4f3507eeb4cc6334401274d37a5c0", size = 194292, upload-time = "2026-08-28T10:28:11.06Z" },
     { url = "https://files.pythonhosted.org/packages/a6/c1/69f00d627949580e43d57af0aa465df46868d7c29801c137a55374101294/kiwisolver-1.5.1-graalpy312-graalpy250_312_native-win_amd64.whl", hash = "sha256:a5a00665d1a0e26763a7338d7e911d4598fbc1d50dd0d6b7919b7dc6c5d6569f", size = 73362, upload-time = "2026-08-28T10:28:12.449Z" },
+]
+
+[[package]]
+name = "kt-legacy"
+version = "1.0.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/45/1f/d2cd57ea472f935e699e6f79f46f3728634c820ad4ba02a451127789af81/kt-legacy-1.0.5.tar.gz", hash = "sha256:dbbade58f12c6a6da6062f4b045a6395a8d4195815e3e064bc3e609b69c8a26c", size = 6719, upload-time = "2023-04-12T23:36:54.686Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/16/53/aca9f36da2516db008017db85a1f3cafaee0efc5fc7a25d94c909651792f/kt_legacy-1.0.5-py3-none-any.whl", hash = "sha256:8d5c5b3dccf348367fe9ca5b006e7ad2d1babcce62976cfc199e831ea699dcd3", size = 9606, upload-time = "2023-04-12T23:36:52.499Z" },
 ]
 
 [[package]]
@@ -927,6 +953,8 @@ tf = [
 ]
 torch = [
     { name = "keras" },
+    { name = "keras-tuner" },
+    { name = "six" },
     { name = "torch" },
     { name = "torchvision" },
 ]
@@ -944,6 +972,7 @@ requires-dist = [
     { name = "datasets", marker = "extra == 'llm'" },
     { name = "ipykernel" },
     { name = "keras", marker = "extra == 'torch'", specifier = ">=3" },
+    { name = "keras-tuner", marker = "extra == 'torch'", specifier = ">=1.4.8" },
     { name = "matplotlib" },
     { name = "nbformat" },
     { name = "numpy" },
@@ -951,6 +980,7 @@ requires-dist = [
     { name = "peft", marker = "extra == 'llm'" },
     { name = "scikit-learn" },
     { name = "scipy" },
+    { name = "six", marker = "extra == 'torch'", specifier = ">=1.17.0" },
     { name = "sympy" },
     { name = "tensorflow", marker = "extra == 'tf'" },
     { name = "torch", marker = "extra == 'torch'" },
