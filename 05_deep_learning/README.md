@@ -1,6 +1,6 @@
 # 05 Deep learning
 
-Neural networks from one unit up to convolutional, recurrent and generative models. Notebooks 01 to 07 (05a) cover the foundations: how a network is built, how it learns, and what stops it learning. Notebooks 08 to 12 (05b) cover the architectures: PyTorch and its training loop, CNNs, transfer learning, RNNs and a VAE. Keras 3 on the PyTorch backend is the teaching API for 01 to 07 and 09. Native PyTorch is used where the loop is the lesson (08, 10, 11, 12). TensorFlow-only material goes in an appendix, not yet written.
+Neural networks from one unit up to convolutional, recurrent and generative models. Notebooks 01 to 07 (05a) cover the foundations: how a network is built, how it learns, and what stops it learning. Notebooks 08 to 12 (05b) cover the architectures: PyTorch and its training loop, CNNs, transfer learning, RNNs and a VAE. Keras 3 on the PyTorch backend is the teaching API for 01 to 07 and 09. Native PyTorch is used where the loop is the lesson (08, 10, 11, 12). TensorFlow-only material (`tf.data`, `GradientTape`) is in `appendix/`. It needs the `tf` extra in its own environment, because TensorFlow and `umap` cannot share one (both load their own LLVM and the kernel aborts). Set it up with `UV_PROJECT_ENVIRONMENT=.venv-tf uv sync --extra torch --extra tf`, then run the appendix with `UV_PROJECT_ENVIRONMENT=.venv-tf uv run --extra torch --extra tf pytest 05_deep_learning/appendix`. The main test suite skips it when TensorFlow is not installed.
 
 ## Concept map
 

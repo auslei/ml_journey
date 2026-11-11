@@ -1,6 +1,6 @@
 # Progress and handoff
 
-Last updated: 2026-11-10. Branch: `consolidate-ml-journey` (not merged, not pushed).
+Last updated: 2026-11-11. Branch: `consolidate-ml-journey` (not merged, not pushed).
 
 ## Goal
 
@@ -14,15 +14,17 @@ One project that walks from linear algebra to LLM fine-tuning, as a personal ref
 | 02 probability | done | basics, Bayes, MLE/MAP bridge to ML |
 | 03 classical ML | done | regression (part A) and classification, trees, ensembles, metrics, scorecard (part B) |
 | 04 unsupervised | done | k-means, hierarchical, DBSCAN, GMM, PCA, t-SNE, UMAP, evaluation |
-| 05 deep learning | not started | |
+| 05 deep learning | done | 12 notebooks plus intuition test, TensorFlow appendix in its own env (see decisions) |
 | 06 NLP | not started | |
 | 07 LLM | not started | |
 
-Full suite: `uv run pytest` (55 passed, about 2 minutes), `uv run ruff check .` and `uv run ruff format --check .` clean.
+Full suite: `uv run pytest` (96 passed, about 6 minutes on a CUDA machine), `uv run ruff check .` and `uv run ruff format --check .` clean.
 
 ## Decisions made
 
 - Keras 3 is the teaching API (runs on the PyTorch backend). Native PyTorch where the training loop is the lesson, and for NLP and LLM. TensorFlow-only material (`tf.data`, `GradientTape`) goes in an appendix at the end of section 05. Confirm Keras 3 backend support in the installed version before pinning.
+- TensorFlow cannot share an environment with `umap` (numba and TF load conflicting LLVM copies, so `import umap` aborts the kernel once TF is installed). The appendix runs in a second env: `UV_PROJECT_ENVIRONMENT=.venv-tf uv run --extra torch --extra tf pytest 05_deep_learning/appendix`. `05_deep_learning/conftest.py` skips it when TF is absent.
+- GPU: `common.dl.get_device()` picks cuda, then mps, then cpu. Prose numbers in 05 were read off CUDA runs and shift by a few points on CPU.
 - Python 3.12, `uv`, one `pyproject.toml`. `umap-learn` is a core dependency. Optional extras: `torch`, `tf`, `llm`.
 - `common/` is an installed package. Use `from common.datasets import ...` and `from common.plotting import ...`. Datasets come from sklearn built-ins, seeded generators, or download-and-cache into the gitignored `data/` folder.
 - Notebooks are committed with outputs stripped (`nbstripout`). Each stays under 30KB.
@@ -31,12 +33,8 @@ Full suite: `uv run pytest` (55 passed, about 2 minutes), `uv run ruff check .` 
 
 ## Next steps
 
-1. Section 05 deep learning. Plan it as parts, one sub-agent each, run in order:
-   - 05a: NN basics, backprop, optimisers, learning rate schedules, regularisation, unstable gradients, hyperparameter tuning. Reuse `machine_learning_deep_learning` notebooks 0, 1, 1.1, 1.2, 2, 3, 4, 6, 7, 8, `9.1_auto_diff`.
-   - 05b: CNN (MNIST, plus catsdogs, transfer learning from `5_transfer_learning`), RNN and LSTM (C1 to C4, `a2.pytorch_rnn`), a short PyTorch basics notebook (`a1`), optional VAE.
-   - 05 appendix: TensorFlow-specific material.
-   - Add MNIST and CIFAR-style loaders to `common/datasets.py`. Add the `torch` extra (and Keras 3) to the environment.
-2. Section 06 NLP. Reuse `Word-Embedding` (CBOW, skip-gram), `python_gensim_nlp` (LDA, Word2Vec), `auto_regressive_model`, and `python_topic_modelling`. Add a short attention and transformer notebook.
+1. Section 05 is done. Open item: a deeper prose pass on 05 (notebooks run 700 to 900 words against the 500 target) and notebook 11, where the LSTM does not beat the vanilla RNN on the delayed-recall task (seed-dependent, reported honestly in the prose).
+2. Section 06 NLP. Reuse the C3 and C4 RNN NLP notebooks from `machine_learning_deep_learning`, `Word-Embedding` (CBOW, skip-gram), `python_gensim_nlp` (LDA, Word2Vec), `auto_regressive_model`, and `python_topic_modelling`. Add a short attention and transformer notebook.
 3. Section 07 LLM. Reuse `llm_finetune` (`src`, `scripts`, `tests`, notebooks) and the HuggingFace notebooks `h0` to `h2`. Add a concept notebook on tokenisation and LoRA. Do not copy model weights or data (402MB).
 4. Root `README.md`: roadmap and setup, written last.
 5. Integration check, a voice read-through of all prose, then ask the user whether to merge to main and push.
