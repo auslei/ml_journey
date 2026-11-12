@@ -1,6 +1,6 @@
 # Progress and handoff
 
-Last updated: 2026-11-11. Repo: https://github.com/auslei/ml_journey (public). Sections 01 to 05 are merged into `main` and pushed. Work on a new feature branch for section 06.
+Last updated: 2026-11-13. Repo: https://github.com/auslei/ml_journey (public). Sections 01 to 05 are merged into `main` and pushed. Section 06 is complete on branch `section-06-nlp`, pending merge.
 
 ## Goal
 
@@ -15,10 +15,10 @@ One project that walks from linear algebra to LLM fine-tuning, as a personal ref
 | 03 classical ML | done | regression (part A) and classification, trees, ensembles, metrics, scorecard (part B) |
 | 04 unsupervised | done | k-means, hierarchical, DBSCAN, GMM, PCA, t-SNE, UMAP, evaluation |
 | 05 deep learning | done | 12 notebooks, intuition test, README, TensorFlow appendix in its own env (see decisions) |
-| 06 NLP | not started | |
+| 06 NLP | done | 6 notebooks + intuition test; nltk, gensim, spacy added; native PyTorch throughout |
 | 07 LLM | not started | |
 
-Full suite: `uv run pytest` (96 passed, about 6 minutes on a CUDA machine), `uv run ruff check .` and `uv run ruff format --check .` clean. Last commit: `dc4bafc`. The appendix passes separately in `.venv-tf` (1 test).
+Full suite: section 06 suite 7 passed, ruff clean. Full suite 101/103 passed (2 pre-existing MPS failures in section 05: `08_pytorch_basics` float64/MPS error, `10_transfer_learning` timeout). Last commit: `b9d2f7e` (section-06-nlp branch). The TF appendix passes separately in `.venv-tf` (1 test).
 
 ## Decisions made
 
@@ -33,13 +33,8 @@ Full suite: `uv run pytest` (96 passed, about 6 minutes on a CUDA machine), `uv 
 
 ## Next steps
 
-1. **Section 06 NLP. Write the plan first and get it confirmed** (CLAUDE.md workflow). Proposed parts, one sub-agent each, run in order:
-   - 06a: text basics and embeddings. Reuse `Word-Embedding` (CBOW, skip-gram) and `python_gensim_nlp` (Word2Vec).
-   - 06b: topic models and language models. Reuse `python_gensim_nlp` (LDA), `python_topic_modelling` and `auto_regressive_model`.
-   - 06c: sequence models on text (the C3 and C4 RNN notebooks from `machine_learning_deep_learning`, deliberately left out of 05) plus a short attention and transformer notebook.
-   - Native PyTorch for everything in 06. Read the source notebooks before planning. Watch for large stored outputs and downloads.
-   - Add the `llm` extra only when 07 needs it. Check it does not clash with `umap` or `torch`.
-2. Section 07 LLM. Reuse `llm_finetune` (`src`, `scripts`, `tests`, notebooks) and the HuggingFace notebooks `h0` to `h2`. Add a concept notebook on tokenisation and LoRA. Do not copy model weights or data (402MB).
+1. **Merge section 06 to main and push** — ask the user to confirm before doing so.
+2. **Section 07 LLM.** Reuse `llm_finetune` (`src`, `scripts`, `tests`, notebooks) at `/Volumes/SSD_SAM/github_backup/llm_finetune` and the HuggingFace notebooks `h0` to `h2` from `machine_learning_deep_learning`. Add a concept notebook on tokenisation and LoRA. Do not copy model weights or data (402MB). Add the `llm` extra only when needed; check it does not clash with `umap` or `torch`.
 3. Root `README.md`: roadmap and setup, written last.
 4. Deferred prose pass: 05 notebooks run 700 to 900 words against the 500 target, and 01 and 02 need the blog-quality pass. Notebook 11 (RNN and LSTM) has a seed-dependent result where the LSTM does not beat the vanilla RNN on the delayed-recall task. The prose reports it honestly, but a better task or training budget could be tried.
 5. Integration check, a voice read-through of all prose, then ask the user whether to merge to main and push. Sections 01 to 05 are on `main` (the user approved the merge and a public push on 2026-11-11). Ask again before each later merge or push.
@@ -55,12 +50,14 @@ Full suite: `uv run pytest` (96 passed, about 6 minutes on a CUDA machine), `uv 
 ## How to resume
 
 ```
-cd /home/anthony/github_backup/ml_journey
+cd /Users/auslei/dev/anthonysun.ai/ml_journey
 git checkout main && git pull
-git checkout -b section-06-nlp
+git checkout -b section-07-llm
 uv sync --extra torch
-uv run pytest 05_deep_learning/intuition_test.ipynb
+uv run --extra torch pytest 06_nlp/
 ```
+
+Source backup is at `/Volumes/SSD_SAM/github_backup/` (external SSD — must be mounted).
 
 Optional, only to run the TensorFlow appendix:
 
@@ -69,4 +66,4 @@ UV_PROJECT_ENVIRONMENT=.venv-tf uv sync --extra torch --extra tf
 UV_PROJECT_ENVIRONMENT=.venv-tf uv run --extra torch --extra tf pytest 05_deep_learning/appendix
 ```
 
-Then ask Claude to read `CLAUDE.md` and this file, and plan section 06. Workflow in use: plan, confirm, one sub-agent per part run sequentially, each owns its tests, and the coordinator re-runs the gates before committing.
+Then ask Claude to read `CLAUDE.md` and this file, and plan section 07. Workflow in use: plan, confirm, sub-agents per notebook run sequentially or in parallel where independent, each owns its tests, coordinator re-runs the gates before committing.
