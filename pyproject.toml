@@ -4,13 +4,16 @@ version = "0.1.0"
 description = "A learning path from linear algebra to LLM fine-tuning."
 requires-python = ">=3.12,<3.13"
 dependencies = [
+    "gensim>=4.4.0",
     "ipykernel",
     "matplotlib",
     "nbformat",
+    "nltk>=3.10.4",
     "numpy",
     "pandas",
     "scikit-learn",
     "scipy",
+    "spacy>=3.8.18",
     "sympy",
     "umap-learn>=0.5.12",
 ]
