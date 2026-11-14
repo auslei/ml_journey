@@ -29,7 +29,7 @@ torch = [
     "six>=1.17.0",
 ]
 tf = ["tensorflow"]
-llm = ["transformers", "peft", "datasets"]
+llm = ["transformers", "peft", "datasets", "accelerate"]
 
 [dependency-groups]
 dev = ["nbmake", "nbstripout", "pytest", "ruff"]

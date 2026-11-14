@@ -1061,6 +1061,7 @@ dependencies = [
 
 [package.optional-dependencies]
 llm = [
+    { name = "accelerate" },
     { name = "datasets" },
     { name = "peft" },
     { name = "transformers" },
@@ -1091,6 +1092,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "accelerate", marker = "extra == 'llm'" },
     { name = "datasets", marker = "extra == 'llm'" },
     { name = "gensim", marker = "extra == 'nlp'", specifier = ">=4.4.0" },
     { name = "ipykernel" },
