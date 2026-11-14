@@ -27,3 +27,11 @@ under "Build-time questions" and stop the run.
   rather than cut. Per the plan's risk note, nb11 is the item-3 notebook, not an item-2 trim.
 - Q4 result: at length 30, 30 epochs, CPU, seeds 0-4, LSTM beats the vanilla RNN on every seed
   (margins 80.8/81.0/87.3/82.8/83.7, mean 83.1), GRU solves it at 1.00. Bar cleared with 5 seeds.
+- **Item 2 / 08_pytorch_basics minor code fix.** The "what breaks" dtype demo caught only
+  `RuntimeError`. On Apple MPS (this machine's `get_device()`), feeding a float64 array raises
+  `TypeError: Cannot convert a MPS Tensor to float64` at `.to(device)`, before the try body, so
+  the cell errored under nbmake on MPS. This is pre-existing (HEAD fails identically here). Changed
+  the except to `(RuntimeError, TypeError)` so the demo is portable across CPU/CUDA/MPS and the
+  item-6 gate is green on this Mac. The printed "dtype mismatch:" message still holds. Only code
+  change the coordinator made to a section-05 notebook; all other 05 code cells are byte-identical
+  to HEAD.
