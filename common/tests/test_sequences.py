@@ -1,7 +1,12 @@
 import numpy as np
 import pytest
 
-from common.sequences import make_memory_task, one_hot
+from common.sequences import (
+    make_adding_task,
+    make_memory_task,
+    make_noisy_recall_task,
+    one_hot,
+)
 
 
 def test_memory_task_label_is_first_symbol_then_blanks():
@@ -29,6 +34,66 @@ def test_memory_task_is_seeded():
 def test_memory_task_rejects_bad_input(kwargs, match):
     with pytest.raises(ValueError, match=match):
         make_memory_task(**kwargs)
+
+
+def test_noisy_recall_label_is_first_symbol_and_gap_is_noisy():
+    x, y = make_noisy_recall_task(200, 15, n_symbols=4, seed=7)
+    assert x.shape == (200, 15) and y.shape == (200,)
+    assert (y == x[:, 0]).all()
+    assert x.max() < 4 and x.min() >= 0
+    # the gap is random symbols, not a constant blank: some later step must differ from step 0
+    assert (x[:, 1:] != x[:, :1]).any()
+
+
+def test_noisy_recall_is_seeded():
+    a = make_noisy_recall_task(40, 8, seed=1)[0]
+    assert (a == make_noisy_recall_task(40, 8, seed=1)[0]).all()
+    assert not (a == make_noisy_recall_task(40, 8, seed=2)[0]).all()
+
+
+@pytest.mark.parametrize(
+    "kwargs, match",
+    [
+        ({"n_samples": 0, "seq_len": 5}, "n_samples"),
+        ({"n_samples": 5, "seq_len": 0}, "seq_len"),
+        ({"n_samples": 5, "seq_len": 5, "n_symbols": 1}, "n_symbols"),
+    ],
+)
+def test_noisy_recall_rejects_bad_input(kwargs, match):
+    with pytest.raises(ValueError, match=match):
+        make_noisy_recall_task(**kwargs)
+
+
+def test_adding_task_shapes_markers_and_label():
+    x, y = make_adding_task(300, 20, seed=3)
+    assert x.shape == (300, 20, 2) and y.shape == (300,)
+    assert x.dtype == np.float32 and y.dtype == np.float32
+    markers = x[:, :, 1]
+    assert (markers.sum(axis=1) == 2).all()  # exactly two markers per sequence
+    assert (markers[:, :10].sum(axis=1) == 1).all()  # one in each half
+    assert (markers[:, 10:].sum(axis=1) == 1).all()
+    values = x[:, :, 0]
+    expected = (values * markers).sum(axis=1) / 2.0
+    assert np.allclose(y, expected, atol=1e-6)
+    assert y.max() < 1.0 and y.min() >= 0.0
+
+
+def test_adding_task_is_seeded():
+    a = make_adding_task(40, 8, seed=1)[0]
+    assert (a == make_adding_task(40, 8, seed=1)[0]).all()
+    assert not (a == make_adding_task(40, 8, seed=2)[0]).all()
+
+
+@pytest.mark.parametrize(
+    "kwargs, match",
+    [
+        ({"n_samples": 0, "seq_len": 5}, "n_samples"),
+        ({"n_samples": 5, "seq_len": 1}, "seq_len"),
+    ],
+)
+def test_adding_task_rejects_bad_input(kwargs, match):
+    with pytest.raises(ValueError, match=match):
+        make_adding_task(**kwargs)
 
 
 def test_one_hot_shape_and_values():

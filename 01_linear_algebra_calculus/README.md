@@ -1,6 +1,6 @@
 # 01 Linear algebra and calculus
 
-The maths every later section leans on. Vectors and matrices describe data and models. Decompositions show where the structure is. Gradients say how to improve a model, and autodiff computes them for you.
+The maths every later section leans on. Four ideas carry the whole course. Vectors and matrices describe data and models, so a dataset is a grid and a model is a machine that reshapes it. Decompositions pull a matrix apart to show which directions hold the structure. Gradients say which way to move a model to make it better. Autodiff computes those gradients for you, which is the trick that makes training deep networks feasible. Get comfortable here and the later sections read as applications of these four, not new mathematics.
 
 ## Concept map
 
@@ -28,10 +28,10 @@ All notebooks run on the core dependencies. PyTorch in notebook 04 is an optiona
 
 ## What you should be able to explain at the end
 
-- Why a dataset is a matrix and a linear model is one matrix-vector product.
-- What the columns of a matrix mean, and what a zero determinant says about information loss.
+- Why a dataset is a matrix and a linear model is one matrix-vector product, $\hat y = Xw$.
+- What the columns of a matrix mean (where the basis vectors land), and what a zero determinant says about information loss.
 - What an eigenvector is, how SVD relates to eigendecomposition, and why a few singular values often carry most of the signal.
-- Why the normal equation can fail on collinear features and what to use instead.
-- Why the gradient points uphill, and what sets a stable learning rate.
+- Why the normal equation squares the condition number and fails on collinear features, and what to use instead.
+- Why the gradient points uphill, and why the stable learning rate is bounded by the Hessian's largest eigenvalue.
 - How the chain rule turns into backpropagation, and why reverse mode costs one backward pass for any number of parameters.
-- How to check an analytic gradient against a finite difference, and what step size to use.
+- How to check an analytic gradient against a finite difference, and why $10^{-5}$ is the sweet spot for the step size.

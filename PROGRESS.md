@@ -1,6 +1,6 @@
 # Progress and handoff
 
-Last updated: 2026-11-14. Repo: https://github.com/auslei/ml_journey (public). Sections 01 to 06 are merged into `main`. Section 07 is complete on branch `llm07261114`, pending merge.
+Last updated: 2026-11-15. Repo: https://github.com/auslei/ml_journey (public). Sections 01 to 07 are merged into `main`. The `polish261114` branch holds the final polish pass (prose depth and length, the notebook 11 rewrite, voice read-through), pending review.
 
 ## Goal
 
@@ -28,16 +28,15 @@ Section 07 gates (branch `llm07261114`): `pytest 07_llm/ common/` 99 passed offl
 - Python 3.12, `uv`, one `pyproject.toml`. `umap-learn` is a core dependency. Optional extras: `torch`, `tf`, `llm`, `nlp`.
 - `common/` is an installed package. Use `from common.datasets import ...` and `from common.plotting import ...`. Datasets come from sklearn built-ins, seeded generators, or download-and-cache into the gitignored `data/` folder.
 - Notebooks are committed with outputs stripped (`nbstripout`). Each stays under 30KB.
-- Prose depth is one markdown cell per code cell, about 500 words per notebook. The user said this is fine for now. A deeper blog-quality pass on 01 and 02 can wait for the end.
+- Prose depth is one markdown cell per code cell, about 500 words per notebook. Sections 01 and 02 got the deeper blog-quality pass in `polish261114`.
 - Source folders under `/home/anthony/github_backup/` are read-only. Their `.git` directories were removed earlier at the user's request.
 - Section 07 drops Unsloth and bitsandbytes 4-bit (CUDA and Linux only) and rewrites the engine on plain `transformers` + `peft` + `Trainer`, keeping the source's shape (config dataclass, mode-aware instruct/pretrain, data-prep helpers). LoRA comes from `peft` directly. The Ollama synthetic Q&A, PDF and vision parsing, GGUF export, chat CLI and Streamlit app were dropped; they need external services or heavy dependencies and are not needed to teach fine-tuning.
 - Section 07 runs offline on a tiny GPT-2 from config for tests and nbmake; a real run is opt-in via `LLM_BASE_MODEL=Qwen/Qwen2.5-0.5B-Instruct`. `train()` forces CPU for the tiny model (deterministic, dodges the MPS float64 issue) and uses `get_device()` for a real model. Network-gated notebook cells catch only `(OSError, ImportError)` and print a skip note, so nbmake passes offline.
 
 ## Next steps
 
-1. **Merge section 07 to main and push** — ask the user to confirm before doing so. The PR from `llm07261114` is open against `main`.
-2. Deferred prose pass: 05 notebooks run 700 to 900 words against the 500 target, and 01 and 02 need the blog-quality pass. Notebook 11 (RNN and LSTM) has a seed-dependent result where the LSTM does not beat the vanilla RNN on the delayed-recall task. The prose reports it honestly, but a better task or training budget could be tried.
-3. A voice read-through of all prose across every section, then the final blog-quality polish. Sections 01 to 06 are on `main` (the user approved the merge and a public push). Ask again before each later merge or push.
+1. **Review and merge `polish261114` to main.** Ask the user to confirm before merging or pushing. The PR is open against `main`. This branch finished the deferred prose pass: 01 and 02 got the blog-quality depth pass, the 11 main-path section-05 notebooks were trimmed toward 500 words, and notebook 11 was rewritten onto the adding problem so the LSTM now beats the vanilla RNN on every one of five seeds (mean margin 83 points, CPU-deterministic).
+2. Optional later work: a voice read-through of sections 03, 04, 06 and 07 notebook prose (this pass covered their READMEs, not every notebook), and any blog-post-specific editing as the posts are written.
 
 ## Lessons for the next run
 
@@ -56,7 +55,7 @@ uv sync --extra torch --extra llm
 uv run --extra torch --extra llm pytest 07_llm/ common/
 ```
 
-Source backup is at `/Volumes/SSD_SAM/github_backup/` (external SSD — must be mounted).
+Source backup is at `/Volumes/SSD_SAM/github_backup/` (external SSD, must be mounted).
 
 Optional, only to run the TensorFlow appendix:
 
@@ -65,4 +64,4 @@ UV_PROJECT_ENVIRONMENT=.venv-tf uv sync --extra torch --extra tf
 UV_PROJECT_ENVIRONMENT=.venv-tf uv run --extra torch --extra tf pytest 05_deep_learning/appendix
 ```
 
-Then ask Claude to read `CLAUDE.md` and this file, and plan section 07. Workflow in use: plan, confirm, sub-agents per notebook run sequentially or in parallel where independent, each owns its tests, coordinator re-runs the gates before committing.
+Then ask Claude to read `CLAUDE.md` and this file. All seven sections and the final polish are in; the open work is reviewing and merging `polish261114`, then blog-post editing. Workflow in use: plan, confirm, sub-agents per notebook run sequentially or in parallel where independent, each owns its tests, coordinator re-runs the gates before committing.

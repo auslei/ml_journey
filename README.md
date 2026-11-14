@@ -65,12 +65,6 @@ Sections 06 and 07 are skipped without their extras, so the bare `uv run pytest`
 
 Shared code lives in `common/` (datasets, plotting, deep learning helpers) and has its own unit tests. Sections talk to each other only through `common/`.
 
-## Future plans
-
-1. **A deeper writing pass.** The early notebooks (01 and 02) need a blog-quality rewrite, and the section 05 notebooks run longer than the prose target.
-2. **A better recurrent example.** In notebook 11 the LSTM does not beat the vanilla RNN on the delayed-recall task, and the result depends on the seed. A better task or training budget would show the textbook result.
-3. **A full read-through.** One pass over all prose for voice and consistency now that all seven sections are in.
-
 ## Layout
 
 ```
