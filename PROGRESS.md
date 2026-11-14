@@ -1,6 +1,6 @@
 # Progress and handoff
 
-Last updated: 2026-11-15. Repo: https://github.com/auslei/ml_journey (public). Sections 01 to 07 are merged into `main`. The `polish261114` branch holds the final polish pass (prose depth and length, the notebook 11 rewrite, voice read-through), pending review.
+Last updated: 2026-11-15. Repo: https://github.com/auslei/ml_journey (public). Sections 01 to 07 and the final polish pass (`polish261114`, PR #3) are merged into `main`.
 
 ## Goal
 
@@ -35,7 +35,7 @@ Section 07 gates (branch `llm07261114`): `pytest 07_llm/ common/` 99 passed offl
 
 ## Next steps
 
-1. **Review and merge `polish261114` to main.** Ask the user to confirm before merging or pushing. The PR is open against `main`. This branch finished the deferred prose pass: 01 and 02 got the blog-quality depth pass, the 11 main-path section-05 notebooks were trimmed toward 500 words, and notebook 11 was rewritten onto the adding problem so the LSTM now beats the vanilla RNN on every one of five seeds (mean margin 83 points, CPU-deterministic).
+1. Done: `polish261114` merged via PR #3 (01/02 depth pass, section 05 trimmed toward 500 words, notebook 11 on the adding problem with the LSTM beating the vanilla RNN on all five seeds, mean margin 83.1 points).
 2. Optional later work: a voice read-through of sections 03, 04, 06 and 07 notebook prose (this pass covered their READMEs, not every notebook), and any blog-post-specific editing as the posts are written.
 
 ## Lessons for the next run
@@ -64,4 +64,4 @@ UV_PROJECT_ENVIRONMENT=.venv-tf uv sync --extra torch --extra tf
 UV_PROJECT_ENVIRONMENT=.venv-tf uv run --extra torch --extra tf pytest 05_deep_learning/appendix
 ```
 
-Then ask Claude to read `CLAUDE.md` and this file. All seven sections and the final polish are in; the open work is reviewing and merging `polish261114`, then blog-post editing. Workflow in use: plan, confirm, sub-agents per notebook run sequentially or in parallel where independent, each owns its tests, coordinator re-runs the gates before committing.
+Then ask Claude to read `CLAUDE.md` and this file. All seven sections and the final polish are in; the open work is optional: a voice read-through of 03, 04, 06 and 07 notebook prose, then blog-post editing. Workflow in use: plan, confirm, sub-agents per notebook run sequentially or in parallel where independent, each owns its tests, coordinator re-runs the gates before committing.
