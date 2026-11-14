@@ -62,6 +62,69 @@ def plot_clusters(
     return ax
 
 
+def draw_computation_graph(
+    nodes: dict[str, tuple[float, float]],
+    edges: list[tuple[str, str]],
+    ax: Axes | None = None,
+    edge_labels: dict[tuple[str, str], str] | None = None,
+    highlight: set[str] | None = None,
+    title: str | None = None,
+) -> Axes:
+    """Draw a computation graph: labelled boxes at fixed positions joined by arrows.
+
+    ``nodes`` maps a node name to its ``(x, y)`` position, so the caller controls the
+    layout and the picture is deterministic (no random placement). ``edges`` lists
+    ``(source, target)`` pairs drawn as arrows pointing from source to target, the
+    direction a forward pass flows. ``edge_labels`` optionally annotates an edge (for
+    example a local derivative). ``highlight`` names nodes to fill in a warm colour,
+    used to pick out the path a gradient flows back along.
+    """
+    unknown = {n for e in edges for n in e} - set(nodes)
+    if unknown:
+        raise ValueError(f"edges reference nodes not in `nodes`: {sorted(unknown)}")
+    if ax is None:
+        ax = plt.gca()
+    highlight = highlight or set()
+    for src, dst in edges:
+        (x0, y0), (x1, y1) = nodes[src], nodes[dst]
+        ax.annotate(
+            "",
+            xy=(x1, y1),
+            xytext=(x0, y0),
+            arrowprops={"arrowstyle": "-|>", "color": "0.4", "shrinkA": 16, "shrinkB": 16},
+        )
+        if edge_labels and (src, dst) in edge_labels:
+            ax.text(
+                (x0 + x1) / 2,
+                (y0 + y1) / 2,
+                edge_labels[(src, dst)],
+                fontsize=9,
+                color="0.3",
+                ha="center",
+                va="center",
+                bbox={"boxstyle": "round", "fc": "white", "ec": "none", "alpha": 0.8},
+            )
+    for name, (x, y) in nodes.items():
+        colour = "#ffd9a0" if name in highlight else "#cfe3ff"
+        ax.text(
+            x,
+            y,
+            name,
+            fontsize=10,
+            ha="center",
+            va="center",
+            bbox={"boxstyle": "round,pad=0.4", "fc": colour, "ec": "0.3"},
+        )
+    xs = [p[0] for p in nodes.values()]
+    ys = [p[1] for p in nodes.values()]
+    ax.set_xlim(min(xs) - 1, max(xs) + 1)
+    ax.set_ylim(min(ys) - 1, max(ys) + 1)
+    ax.axis("off")
+    if title:
+        ax.set_title(title)
+    return ax
+
+
 def plot_history(
     history: dict[str, list[float]],
     keys: tuple[str, ...] = ("loss", "val_loss"),

@@ -55,3 +55,33 @@ def test_history_plot_rejects_missing_key() -> None:
 
     with pytest.raises(KeyError, match="accuracy"):
         plot_history({"loss": [1.0]}, keys=("accuracy",))
+
+
+def test_computation_graph_draws_nodes_and_edges() -> None:
+    from common.plotting import draw_computation_graph
+
+    nodes = {"x": (0, 0), "w": (0, 1), "z": (1, 0.5), "L": (2, 0.5)}
+    edges = [("x", "z"), ("w", "z"), ("z", "L")]
+    ax = draw_computation_graph(
+        nodes,
+        edges,
+        ax=plt.subplots()[1],
+        edge_labels={("z", "L"): "dL/dz"},
+        highlight={"L", "z"},
+        title="g",
+    )
+    labels = [t.get_text() for t in ax.texts if t.get_text()]
+    assert sorted(labels) == sorted([*nodes, "dL/dz"])  # one per node plus the edge label
+    assert ax.get_title() == "g"
+    # Deterministic: same inputs give the same node text positions on a repeat call.
+    first = {t.get_text(): t.get_position() for t in ax.texts if t.get_text() in nodes}
+    ax2 = draw_computation_graph(nodes, edges, ax=plt.subplots()[1])
+    second = {t.get_text(): t.get_position() for t in ax2.texts if t.get_text() in nodes}
+    assert first == second
+
+
+def test_computation_graph_rejects_unknown_edge_node() -> None:
+    from common.plotting import draw_computation_graph
+
+    with pytest.raises(ValueError, match="not in"):
+        draw_computation_graph({"a": (0, 0)}, [("a", "b")])
