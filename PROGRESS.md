@@ -1,6 +1,6 @@
 # Progress and handoff
 
-Last updated: 2026-11-13. Repo: https://github.com/auslei/ml_journey (public). Sections 01 to 05 are merged into `main` and pushed. Section 06 is complete on branch `section-06-nlp`, pending merge.
+Last updated: 2026-11-14. Repo: https://github.com/auslei/ml_journey (public). Sections 01 to 06 are merged into `main`. Section 07 is complete on branch `llm07261114`, pending merge.
 
 ## Goal
 
@@ -16,9 +16,9 @@ One project that walks from linear algebra to LLM fine-tuning, as a personal ref
 | 04 unsupervised | done | k-means, hierarchical, DBSCAN, GMM, PCA, t-SNE, UMAP, evaluation |
 | 05 deep learning | done | 12 notebooks, intuition test, README, TensorFlow appendix in its own env (see decisions) |
 | 06 NLP | done | 6 notebooks + intuition test; nltk, gensim, spacy added; native PyTorch throughout |
-| 07 LLM | not started | |
+| 07 LLM | done | 4 notebooks + intuition test; `llm_finetune` package on transformers + peft + Trainer; tiny GPT-2 offline, Qwen opt-in |
 
-Full suite: section 06 suite 7 passed, ruff clean. Full suite 101/103 passed (2 pre-existing MPS failures in section 05: `08_pytorch_basics` float64/MPS error, `10_transfer_learning` timeout). Last commit: `b9d2f7e` (section-06-nlp branch). The TF appendix passes separately in `.venv-tf` (1 test).
+Section 07 gates (branch `llm07261114`): `pytest 07_llm/ common/` 99 passed offline (41 unit tests, 5 notebooks, common suite), ruff check and ruff format clean, the four content notebooks plus the intuition test pass `--nbmake` offline. The `llm` extra adds transformers 5.22.2, peft 0.21.2, datasets and accelerate, and is independent of the `nlp` extra; `import umap` still works alongside it.
 
 ## Decisions made
 
@@ -30,14 +30,14 @@ Full suite: section 06 suite 7 passed, ruff clean. Full suite 101/103 passed (2 
 - Notebooks are committed with outputs stripped (`nbstripout`). Each stays under 30KB.
 - Prose depth is one markdown cell per code cell, about 500 words per notebook. The user said this is fine for now. A deeper blog-quality pass on 01 and 02 can wait for the end.
 - Source folders under `/home/anthony/github_backup/` are read-only. Their `.git` directories were removed earlier at the user's request.
+- Section 07 drops Unsloth and bitsandbytes 4-bit (CUDA and Linux only) and rewrites the engine on plain `transformers` + `peft` + `Trainer`, keeping the source's shape (config dataclass, mode-aware instruct/pretrain, data-prep helpers). LoRA comes from `peft` directly. The Ollama synthetic Q&A, PDF and vision parsing, GGUF export, chat CLI and Streamlit app were dropped; they need external services or heavy dependencies and are not needed to teach fine-tuning.
+- Section 07 runs offline on a tiny GPT-2 from config for tests and nbmake; a real run is opt-in via `LLM_BASE_MODEL=Qwen/Qwen2.5-0.5B-Instruct`. `train()` forces CPU for the tiny model (deterministic, dodges the MPS float64 issue) and uses `get_device()` for a real model. Network-gated notebook cells catch only `(OSError, ImportError)` and print a skip note, so nbmake passes offline.
 
 ## Next steps
 
-1. **Merge section 06 to main and push** — ask the user to confirm before doing so.
-2. **Section 07 LLM.** Reuse `llm_finetune` (`src`, `scripts`, `tests`, notebooks) at `/Volumes/SSD_SAM/github_backup/llm_finetune` and the HuggingFace notebooks `h0` to `h2` from `machine_learning_deep_learning`. Add a concept notebook on tokenisation and LoRA. Do not copy model weights or data (402MB). Add the `llm` extra only when needed; check it does not clash with `umap` or `torch`.
-3. Root `README.md`: roadmap and setup, written last.
-4. Deferred prose pass: 05 notebooks run 700 to 900 words against the 500 target, and 01 and 02 need the blog-quality pass. Notebook 11 (RNN and LSTM) has a seed-dependent result where the LSTM does not beat the vanilla RNN on the delayed-recall task. The prose reports it honestly, but a better task or training budget could be tried.
-5. Integration check, a voice read-through of all prose, then ask the user whether to merge to main and push. Sections 01 to 05 are on `main` (the user approved the merge and a public push on 2026-11-11). Ask again before each later merge or push.
+1. **Merge section 07 to main and push** — ask the user to confirm before doing so. The PR from `llm07261114` is open against `main`.
+2. Deferred prose pass: 05 notebooks run 700 to 900 words against the 500 target, and 01 and 02 need the blog-quality pass. Notebook 11 (RNN and LSTM) has a seed-dependent result where the LSTM does not beat the vanilla RNN on the delayed-recall task. The prose reports it honestly, but a better task or training budget could be tried.
+3. A voice read-through of all prose across every section, then the final blog-quality polish. Sections 01 to 06 are on `main` (the user approved the merge and a public push). Ask again before each later merge or push.
 
 ## Lessons for the next run
 
@@ -52,9 +52,8 @@ Full suite: section 06 suite 7 passed, ruff clean. Full suite 101/103 passed (2 
 ```
 cd /Users/auslei/dev/anthonysun.ai/ml_journey
 git checkout main && git pull
-git checkout -b section-07-llm
-uv sync --extra torch --extra nlp
-uv run --extra torch --extra nlp pytest 06_nlp/
+uv sync --extra torch --extra llm
+uv run --extra torch --extra llm pytest 07_llm/ common/
 ```
 
 Source backup is at `/Volumes/SSD_SAM/github_backup/` (external SSD — must be mounted).

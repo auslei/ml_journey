@@ -14,7 +14,7 @@ Every notebook follows the same order: intuition, maths, cost function, a from-s
 | [04](04_unsupervised) | k-means, hierarchical, DBSCAN, GMM, PCA, t-SNE, UMAP, evaluation | done |
 | [05](05_deep_learning) | Neural nets, optimisers, CNNs, transfer learning, RNNs, VAE | done |
 | [06](06_nlp) | NLP: preprocessing, embeddings, topic models, sequence models, attention | done |
-| 07 | LLMs: tokenisation, fine-tuning, LoRA | planned |
+| [07](07_llm) | LLMs: tokenisation, HuggingFace basics, LoRA, a fine-tuning walkthrough | done |
 
 Each section has its own README with a concept map, a reading order and a list of what you should be able to explain at the end. Each also closes with an `intuition_test.ipynb`: questions first, your predictions written down before running the code, answers after.
 
@@ -28,9 +28,12 @@ cd ml_journey
 uv sync                             # sections 01 to 04
 uv sync --extra torch               # adds section 05 (PyTorch, torchvision, Keras 3)
 uv sync --extra torch --extra nlp   # adds section 06 (gensim, NLTK, spaCy)
+uv sync --extra torch --extra llm   # adds section 07 (transformers, peft, datasets, accelerate)
 ```
 
 Section 06 also needs the spaCy English model and a few NLTK corpora. Install the model once with `uv run --extra nlp python -m spacy download en_core_web_sm`. The NLTK data (punkt, stopwords, gutenberg, wordnet, movie_reviews) downloads automatically on first run.
+
+Section 07 runs offline by default on a tiny GPT-2 built from a small config, so the tests and notebooks need no network. A real fine-tune is opt-in: set `LLM_BASE_MODEL=Qwen/Qwen2.5-0.5B-Instruct` to download Qwen (about 1GB) into the Hugging Face cache and run the same pipeline on MPS or CPU. The `llm` extra is independent of the `nlp` extra, and no TensorFlow is involved.
 
 Open the notebooks in VS Code or any Jupyter front end, using the `.venv` kernel (`ipykernel` is installed).
 

@@ -53,8 +53,8 @@ Six modules, each small and single-purpose.
 ```python
 @dataclass
 class TrainConfig:
-    base_model: str = "tiny"          # "tiny" builds offline; else an HF model id
-    mode: str = "instruct"            # "instruct" | "pretrain"
+    base_model: str = "tiny"  # "tiny" builds offline; else an HF model id
+    mode: str = "instruct"  # "instruct" | "pretrain"
     max_seq_length: int = 128
     lora_rank: int = 8
     lora_alpha: int = 16
@@ -68,6 +68,7 @@ class TrainConfig:
     seed: int = 42
     output_dir: str = "data/llm_runs"
 
+
 def from_yaml(path: str | Path) -> TrainConfig: ...
 def load_config(path: str | Path | None = None, **overrides: Any) -> TrainConfig: ...
 ```
@@ -77,7 +78,7 @@ Validates `mode` and raises on an unknown value.
 ```python
 def train_bpe(corpus: list[str], num_merges: int) -> list[tuple[str, str]]: ...
 def encode(word: str, merges: list[tuple[str, str]]) -> list[str]: ...
-def _pair_counts(vocab: dict[str, int]) -> Counter: ...   # internal
+def _pair_counts(vocab: dict[str, int]) -> Counter: ...  # internal
 ```
 No dependencies beyond the standard library. Raises on `num_merges < 0`.
 
@@ -86,19 +87,19 @@ No dependencies beyond the standard library. Raises on `num_merges < 0`.
 def chunk_text(text: str, chunk_size: int, overlap: int) -> list[str]: ...
 def read_jsonl(path: str | Path) -> list[dict]: ...
 def write_jsonl(records: list[dict], path: str | Path) -> int: ...
-def format_instruct(example: dict, tokenizer: Any) -> str: ...   # Alpaca or chat template
+def format_instruct(example: dict, tokenizer: Any) -> str: ...  # Alpaca or chat template
 def format_pretrain(example: dict) -> str: ...
 def build_dataset(records: list[dict], tokenizer: Any, config: TrainConfig) -> Any: ...
-def demo_corpus() -> list[dict]: ...   # tiny built-in instruct set, offline
+def demo_corpus() -> list[dict]: ...  # tiny built-in instruct set, offline
 ```
 `chunk_text` is character-based with stdlib only (no langchain). `build_dataset` tokenises and
 train/val splits deterministically from the seed. Raises when `overlap >= chunk_size`.
 
 ### `model.py`
 ```python
-def tiny_causal_lm(seed: int = 42) -> tuple[Any, Any]: ...        # GPT-2 from small config, offline
+def tiny_causal_lm(seed: int = 42) -> tuple[Any, Any]: ...  # GPT-2 from small config, offline
 def load_base(model_id: str, device: str | None = None) -> tuple[Any, Any]: ...
-def add_lora(model: Any, config: TrainConfig) -> Any: ...         # peft get_peft_model
+def add_lora(model: Any, config: TrainConfig) -> Any: ...  # peft get_peft_model
 def resolve_target_modules(model: Any, config: TrainConfig) -> list[str]: ...
 ```
 `tiny_causal_lm` builds a small `GPT2LMHeadModel` from a `GPT2Config` plus a tiny trained
@@ -117,8 +118,9 @@ float32 to dodge the MPS float64 problem seen in section 05.
 ### `evaluate.py`
 ```python
 def perplexity(model: Any, tokenizer: Any, texts: list[str], device: str) -> float: ...
-def generate(model: Any, tokenizer: Any, prompt: str,
-             max_new_tokens: int = 50, seed: int = 42) -> str: ...
+def generate(
+    model: Any, tokenizer: Any, prompt: str, max_new_tokens: int = 50, seed: int = 42
+) -> str: ...
 ```
 `perplexity` is `exp(mean token loss)`. `generate` is seeded and deterministic for a fixed
 seed.
