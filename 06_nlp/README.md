@@ -31,14 +31,14 @@ Transformer encoder block: attention + residuals + feed-forward (06)
 ## Reading order
 
 1. `01_text_preprocessing.ipynb`: tokenisation, stopword removal, stemming and lemmatisation by hand and with NLTK and spaCy, then bag-of-words and TF-IDF from scratch and with sklearn.
-2. `02_word_embeddings.ipynb`: why one-hot vectors have no geometry, CBOW in NumPy then PyTorch, skip-gram idea, gensim Word2Vec on the Gutenberg corpus, t-SNE visualisation of the learned space.
+2. `02_word_embeddings.ipynb`: why one-hot vectors have no geometry, CBOW in NumPy then PyTorch, the skip-gram idea, gensim Word2Vec (skip-gram with negative sampling) on the Gutenberg corpus, t-SNE visualisation of the learned space.
 3. `03_topic_models.ipynb`: the LDA generative story, Dirichlet priors and plate notation, bag-of-words preprocessing with gensim, training LDA on a small corpus, topic coherence over different values of k.
 4. `04_sequence_models_text.ipynb`: the autoregressive objective, character-level language model, vanilla RNN cell in PyTorch, LSTM swap, perplexity as a measure of surprise, text sampling.
 5. `05_sentiment_classification.ipynb`: sequence classification with one label per document, LSTM classifier with `pack_padded_sequence`, logistic bag-of-words baseline, pre-trained gensim embeddings frozen then fine-tuned.
 6. `06_attention_transformer.ipynb`: the fixed-hidden-state bottleneck in RNNs, scaled dot-product attention from scratch, multi-head attention, sinusoidal positional encoding, Transformer encoder block with Add and Norm, attention weight visualisation.
 7. `intuition_test.ipynb`: predict first, then run. Questions covering all six notebooks.
 
-Dependencies: `uv sync --extra torch`. No TensorFlow needed. NLTK data is downloaded by the notebooks on first run (punkt, stopwords, gutenberg, wordnet, movie_reviews). The spaCy model is `en_core_web_sm`; install with `uv run python -m spacy download en_core_web_sm`.
+Dependencies: `uv sync --extra torch --extra nlp` (the `nlp` extra pulls gensim, NLTK and spaCy). No TensorFlow needed. NLTK data is downloaded by the notebooks on first run (punkt, stopwords, gutenberg, wordnet, movie_reviews). The spaCy model is `en_core_web_sm`; install with `uv run --extra nlp python -m spacy download en_core_web_sm`.
 
 ## What you should be able to explain at the end
 

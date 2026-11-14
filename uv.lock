@@ -1048,16 +1048,13 @@ name = "ml-journey"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "gensim" },
     { name = "ipykernel" },
     { name = "matplotlib" },
     { name = "nbformat" },
-    { name = "nltk" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "scikit-learn" },
     { name = "scipy" },
-    { name = "spacy" },
     { name = "sympy" },
     { name = "umap-learn" },
 ]
@@ -1067,6 +1064,11 @@ llm = [
     { name = "datasets" },
     { name = "peft" },
     { name = "transformers" },
+]
+nlp = [
+    { name = "gensim" },
+    { name = "nltk" },
+    { name = "spacy" },
 ]
 tf = [
     { name = "tensorflow" },
@@ -1090,20 +1092,20 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "datasets", marker = "extra == 'llm'" },
-    { name = "gensim", specifier = ">=4.4.0" },
+    { name = "gensim", marker = "extra == 'nlp'", specifier = ">=4.4.0" },
     { name = "ipykernel" },
     { name = "keras", marker = "extra == 'torch'", specifier = ">=3" },
     { name = "keras-tuner", marker = "extra == 'torch'", specifier = ">=1.4.8" },
     { name = "matplotlib" },
     { name = "nbformat" },
-    { name = "nltk", specifier = ">=3.10.4" },
+    { name = "nltk", marker = "extra == 'nlp'", specifier = ">=3.10.4" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "peft", marker = "extra == 'llm'" },
     { name = "scikit-learn" },
     { name = "scipy" },
     { name = "six", marker = "extra == 'torch'", specifier = ">=1.17.0" },
-    { name = "spacy", specifier = ">=3.8.18" },
+    { name = "spacy", marker = "extra == 'nlp'", specifier = ">=3.8.18" },
     { name = "sympy" },
     { name = "tensorflow", marker = "extra == 'tf'" },
     { name = "torch", marker = "extra == 'torch'" },
@@ -1111,7 +1113,7 @@ requires-dist = [
     { name = "transformers", marker = "extra == 'llm'" },
     { name = "umap-learn", specifier = ">=0.5.12" },
 ]
-provides-extras = ["torch", "tf", "llm"]
+provides-extras = ["nlp", "torch", "tf", "llm"]
 
 [package.metadata.requires-dev]
 dev = [
