@@ -1,6 +1,6 @@
 # Progress and handoff
 
-Last updated: 2026-11-14. Repo: https://github.com/auslei/ml_journey (public). Sections 01 to 06 are merged into `main`. Section 07 is complete on branch `llm07261114`, pending merge.
+Last updated: 2026-11-15. Repo: https://github.com/auslei/ml_journey (public). Sections 01 to 07 are merged into `main`. The `polish261114` branch holds the final polish pass (prose depth and length, the notebook 11 rewrite, voice read-through), pending review.
 
 ## Goal
 
@@ -35,9 +35,8 @@ Section 07 gates (branch `llm07261114`): `pytest 07_llm/ common/` 99 passed offl
 
 ## Next steps
 
-1. **Merge section 07 to main and push** — ask the user to confirm before doing so. The PR from `llm07261114` is open against `main`.
-2. Deferred prose pass: 05 notebooks run 700 to 900 words against the 500 target, and 01 and 02 need the blog-quality pass. Notebook 11 (RNN and LSTM) has a seed-dependent result where the LSTM does not beat the vanilla RNN on the delayed-recall task. The prose reports it honestly, but a better task or training budget could be tried.
-3. A voice read-through of all prose across every section, then the final blog-quality polish. Sections 01 to 06 are on `main` (the user approved the merge and a public push). Ask again before each later merge or push.
+1. **Review and merge `polish261114` to main.** Ask the user to confirm before merging or pushing. The PR is open against `main`. This branch finished the deferred prose pass: 01 and 02 got the blog-quality depth pass, the 11 main-path section-05 notebooks were trimmed toward 500 words, and notebook 11 was rewritten onto the adding problem so the LSTM now beats the vanilla RNN on every one of five seeds (mean margin 83 points, CPU-deterministic).
+2. Optional later work: a voice read-through of sections 03, 04, 06 and 07 notebook prose (this pass covered their READMEs, not every notebook), and any blog-post-specific editing as the posts are written.
 
 ## Lessons for the next run
 
@@ -56,7 +55,7 @@ uv sync --extra torch --extra llm
 uv run --extra torch --extra llm pytest 07_llm/ common/
 ```
 
-Source backup is at `/Volumes/SSD_SAM/github_backup/` (external SSD — must be mounted).
+Source backup is at `/Volumes/SSD_SAM/github_backup/` (external SSD, must be mounted).
 
 Optional, only to run the TensorFlow appendix:
 
@@ -65,4 +64,4 @@ UV_PROJECT_ENVIRONMENT=.venv-tf uv sync --extra torch --extra tf
 UV_PROJECT_ENVIRONMENT=.venv-tf uv run --extra torch --extra tf pytest 05_deep_learning/appendix
 ```
 
-Then ask Claude to read `CLAUDE.md` and this file, and plan section 07. Workflow in use: plan, confirm, sub-agents per notebook run sequentially or in parallel where independent, each owns its tests, coordinator re-runs the gates before committing.
+Then ask Claude to read `CLAUDE.md` and this file. All seven sections and the final polish are in; the open work is reviewing and merging `polish261114`, then blog-post editing. Workflow in use: plan, confirm, sub-agents per notebook run sequentially or in parallel where independent, each owns its tests, coordinator re-runs the gates before committing.

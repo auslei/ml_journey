@@ -1,6 +1,6 @@
 # 02 Probability
 
-Models predict distributions, not single answers. This section covers the vocabulary of probability, Bayes' theorem, and the link from probability to the loss functions used in every later section.
+Models predict distributions, not single answers. A classifier outputs how likely each class is, and treating that output as a real probability is what makes it useful. This section builds the vocabulary of probability, works through Bayes' theorem, and then draws the line from probability to the loss functions used in every later section. The payoff is that squared error, cross-entropy and L2 regularisation stop being formulas to memorise and become consequences of a noise assumption and a prior.
 
 ## Concept map
 
@@ -29,9 +29,9 @@ All notebooks run on the core dependencies (numpy, scipy, pandas, matplotlib, sc
 
 ## What you should be able to explain at the end
 
-- Why a positive result on a 90% accurate test for a 1% disease means about a 9% chance of being sick.
-- What a conjugate prior is, and why Beta(a, b) behaves like a + b pseudo-flips.
-- Why the average of n samples has error of order 1/sqrt(n), and when that fails (heavy tails, dependent rows).
-- Why naive Bayes is naive, and what zero counts and repeated features do to it.
-- How Gaussian noise gives squared error, Bernoulli gives cross-entropy, and a Gaussian prior gives L2.
+- Why a positive result on a 90% accurate test for a 1% disease means about a 9% chance of being sick, because the healthy majority produces most of the positives.
+- What a conjugate prior is, why Beta(a, b) behaves like a + b pseudo-flips, and how enough data overwhelms any prior.
+- Why the average of n samples has error of order 1/sqrt(n), and the two cases where that fails (heavy tails with no finite mean, and dependent or duplicated rows).
+- Why naive Bayes is naive, and what zero counts and repeated features do to its probabilities.
+- How Gaussian noise gives squared error, Bernoulli gives cross-entropy, and a Gaussian prior gives L2, each as a negative log-likelihood.
 - Why softmax outputs are a categorical distribution, and why logistic regression diverges on separable data without a penalty.
