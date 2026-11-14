@@ -64,3 +64,27 @@ A. bpe `_merge_pair` rewritten to scan the symbol list with whole-symbol compari
 B. notebook 04 real-run path formats the prompt with `real_tok.apply_chat_template(...,
    add_generation_prompt=True)` when the tokenizer has a chat template, matching how
    `format_instruct` built the training data; the plain prompt stays for the fallback tokenizer.
+
+## Review round 2
+
+Cursor confirmed all round 1 and Codex findings resolved. Remaining items, all addressed,
+no pushback.
+
+Should fix:
+- README.md roadmap/setup already marked section 07 done, but Layout showed `07_llm/ (planned)`
+  and Future plans still treated 07 as unbuilt. Removed `(planned)` from the Layout tree,
+  dropped the "Section 07, LLMs" Future plans item, and reworded the read-through item from
+  "once section 07 lands" to "now that all seven sections are in".
+
+Nits:
+1. test_evaluate budget test now goes through `evaluate.generate_ids`, the token-level core
+   `generate` wires `max_new_tokens` into, instead of calling `model.generate` directly. Pulled
+   the id-producing body of `generate` out into a public `generate_ids(...) -> (input_ids,
+   output_ids)` helper; `generate` is now a thin decode wrapper over it. The test asserts
+   `output_ids.shape[1] - input_ids.shape[1] <= max_new_tokens`, so it exercises the real
+   wiring and the eval/no_grad/restore path.
+2. evaluate.py module docstring corrected: perplexity casts to float32 and leaves the model in
+   eval mode; generate restores whatever training mode it found (no longer claims both leave it
+   in eval mode).
+3. intuition Q1 answer drops the redundant "plus the end marker" clause, since the printed
+   `pieces` already include `</w>`.

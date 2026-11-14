@@ -1,8 +1,9 @@
 """Evaluation helpers for section 07 LoRA fine-tuning.
 
 Two measures: perplexity, the exponential of the mean per-token cross-entropy, and a
-greedy generation helper for eyeballing what the model learned. Both run in float32 and
-leave the model in eval mode with gradients off.
+greedy generation helper for eyeballing what the model learned. Both run with gradients
+off. Perplexity casts to float32 and leaves the model in eval mode; generate restores
+whatever training mode it found.
 """
 
 import logging
@@ -56,17 +57,20 @@ def perplexity(model: Any, tokenizer: Any, texts: list[str], device: str) -> flo
     return score
 
 
-def generate(
+def generate_ids(
     model: Any,
     tokenizer: Any,
     prompt: str,
     max_new_tokens: int = 50,
     seed: int = 42,
-) -> str:
-    """Greedily continue ``prompt`` and return the decoded text.
+) -> tuple[Any, Any]:
+    """Greedily continue ``prompt`` and return ``(input_ids, output_ids)`` tensors.
 
-    Greedy decoding (``do_sample=False``) makes the output deterministic for a given
-    seed. Special tokens are stripped from the decoded string.
+    This is the token-level core that ``generate`` decodes. Returning the ids lets a
+    caller measure the exact new-token count (``output_ids`` minus ``input_ids``) without
+    decoding and re-encoding, which BPE can expand or shrink. Greedy decoding
+    (``do_sample=False``) is deterministic for a given seed. The model runs in eval mode
+    with gradients off, and its prior training mode is restored.
     """
     import torch
 
@@ -87,5 +91,20 @@ def generate(
             )
     finally:
         model.train(was_training)
-    text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
-    return text
+    return input_ids, output_ids
+
+
+def generate(
+    model: Any,
+    tokenizer: Any,
+    prompt: str,
+    max_new_tokens: int = 50,
+    seed: int = 42,
+) -> str:
+    """Greedily continue ``prompt`` and return the decoded text.
+
+    Thin wrapper over ``generate_ids``: it decodes the output ids and strips special
+    tokens. Deterministic for a given seed.
+    """
+    _, output_ids = generate_ids(model, tokenizer, prompt, max_new_tokens, seed)
+    return tokenizer.decode(output_ids[0], skip_special_tokens=True)

@@ -67,17 +67,16 @@ Shared code lives in `common/` (datasets, plotting, deep learning helpers) and h
 
 ## Future plans
 
-1. **Section 07, LLMs.** Tokenisation, a concept notebook on LoRA, and a fine-tuning pipeline with real Python modules and tests. No model weights or datasets are committed.
-2. **A deeper writing pass.** The early notebooks (01 and 02) need a blog-quality rewrite, and the section 05 notebooks run longer than the prose target.
-3. **A better recurrent example.** In notebook 11 the LSTM does not beat the vanilla RNN on the delayed-recall task, and the result depends on the seed. A better task or training budget would show the textbook result.
-4. **A full read-through.** One pass over all prose for voice and consistency once section 07 lands.
+1. **A deeper writing pass.** The early notebooks (01 and 02) need a blog-quality rewrite, and the section 05 notebooks run longer than the prose target.
+2. **A better recurrent example.** In notebook 11 the LSTM does not beat the vanilla RNN on the delayed-recall task, and the result depends on the seed. A better task or training budget would show the textbook result.
+3. **A full read-through.** One pass over all prose for voice and consistency now that all seven sections are in.
 
 ## Layout
 
 ```
 01_linear_algebra_calculus/   05_deep_learning/
 02_probability/               06_nlp/
-03_classical_ml/              07_llm/            (planned)
+03_classical_ml/              07_llm/
 04_unsupervised/              common/
 ```
 

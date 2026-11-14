@@ -27,19 +27,12 @@ def test_generate_returns_non_empty_string() -> None:
 
 
 def test_generate_respects_token_budget() -> None:
-    # Count new token ids directly. Decoding and re-encoding the text is unreliable:
-    # BPE can expand or shrink, so the re-encoded length is not the generation length.
-    import torch
-
+    # Count new token ids through generate_ids, the core generate() wires max_new_tokens
+    # into. Decoding and re-encoding the text would be unreliable: BPE can expand or
+    # shrink, so the re-encoded length is not the generation length.
     model, tokenizer = model_mod.tiny_causal_lm(seed=42)
-    prompt = "The capital of Marru is"
     max_new_tokens = 8
-    input_ids = tokenizer(prompt, return_tensors="pt")["input_ids"]
-    with torch.no_grad():
-        output_ids = model.generate(
-            input_ids=input_ids,
-            max_new_tokens=max_new_tokens,
-            do_sample=False,
-            pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
-        )
+    input_ids, output_ids = evaluate.generate_ids(
+        model, tokenizer, "The capital of Marru is", max_new_tokens=max_new_tokens, seed=42
+    )
     assert output_ids.shape[1] - input_ids.shape[1] <= max_new_tokens
