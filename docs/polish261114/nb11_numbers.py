@@ -16,18 +16,18 @@ TOL = 0.04
 
 
 class AddNet(nn.Module):
-    def __init__(self, kind, n_hidden=32):
+    def __init__(self, kind: str, n_hidden: int = 32) -> None:
         super().__init__()
         cell = {"rnn": nn.RNN, "gru": nn.GRU, "lstm": nn.LSTM}[kind]
         self.rnn = cell(2, n_hidden, batch_first=True)
         self.out = nn.Linear(n_hidden, 1)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         seq, _ = self.rnn(x)
         return self.out(seq[:, -1]).squeeze(-1)
 
 
-def fit_adding(kind, seq_len, seed, epochs=30):
+def fit_adding(kind: str, seq_len: int, seed: int, epochs: int = 30) -> float:
     xs, ys = make_adding_task(2000, seq_len, seed=seed)
     X, Y = torch.from_numpy(xs).to(DEVICE), torch.from_numpy(ys).to(DEVICE)
     n_tr = 1600
