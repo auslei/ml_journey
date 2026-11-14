@@ -86,5 +86,7 @@ for seq_len in (10, 30, 50):
 # --- parameter counts ---
 print("\n# parameter counts (recurrent layer only)")
 for kind in ("rnn", "gru", "lstm"):
-    counts = [sum(p.numel() for p in AddNet(kind, n_hidden=h).rnn.parameters()) for h in (16, 32, 64)]
+    counts = [
+        sum(p.numel() for p in AddNet(kind, n_hidden=h).rnn.parameters()) for h in (16, 32, 64)
+    ]
     print(f"{kind:>4} at hidden 16/32/64: {counts}")

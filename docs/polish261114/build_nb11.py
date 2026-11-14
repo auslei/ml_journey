@@ -18,7 +18,7 @@ A recurrent network reads a sequence one step at a time and carries a hidden sta
 Order: intuition, maths, cost function, from-scratch version, library version, tuning, what breaks.""")
 
 code.append(
-    '''from common.dl import set_seed, setup_keras
+    """from common.dl import set_seed, setup_keras
 
 setup_keras("torch")
 import matplotlib.pyplot as plt
@@ -33,7 +33,7 @@ set_seed(SEED)
 np.set_printoptions(precision=3, suppress=True)
 plt.rcParams["figure.figsize"] = (6, 3.5)
 device = torch.device("cpu")  # CPU keeps the trained numbers reproducible across machines
-print("device:", device)'''
+print("device:", device)"""
 )
 
 md.append(r"""## 1. Intuition
@@ -55,11 +55,13 @@ GRU and LSTM add gates. The LSTM keeps a separate cell state updated by addition
 A NumPy RNN, forward and backward through time. The recurrent matrix is orthogonal times a scale, so the scale is its largest singular value. Measure the gradient norm at every step for scales 0.5, 1.0 and 1.5 over $T=40$.""")
 
 code.append(
-    '''x_seq, y_seq = make_memory_task(4, seq_len=8, n_symbols=4, seed=SEED)  # 4 is the blank
-print("sequences:\\n", x_seq, "\\nlabels (the first symbol):", y_seq)'''
+    """x_seq, y_seq = make_memory_task(4, seq_len=8, n_symbols=4, seed=SEED)  # 4 is the blank
+print("sequences:\\n", x_seq, "\\nlabels (the first symbol):", y_seq)"""
 )
 
-md.append(r"""At scale 0.5 the gradient at step 1 is $5.5\times10^{-15}$ of the gradient at step 40. At 1.0, where the weights alone would preserve it, the tanh slope still cuts it to $2\times10^{-3}$. At 1.5 it survives (ratio 3.2), because the weights now outgrow the tanh slope. That is the unstable-gradient fork from notebook 05 along the time axis, and gradient clipping is the standard guard for the exploding side.""")
+md.append(
+    r"""At scale 0.5 the gradient at step 1 is $5.5\times10^{-15}$ of the gradient at step 40. At 1.0, where the weights alone would preserve it, the tanh slope still cuts it to $2\times10^{-3}$. At 1.5 it survives (ratio 3.2), because the weights now outgrow the tanh slope. That is the unstable-gradient fork from notebook 05 along the time axis, and gradient clipping is the standard guard for the exploding side."""
+)
 
 code.append(
     '''class NumpyRNN:
@@ -187,17 +189,19 @@ for kind in ("rnn", "gru", "lstm"):
     print(f"{kind:>4}, length 30, five seeds: {np.round(accs, 3)}, mean {np.mean(accs):.3f}")'''
 )
 
-md.append(r"""The split is clean on every seed. The RNN sits at 0.13 to 0.18, the predict-the-mean floor, so it never isolates the two marked values across the gap. The LSTM scores 0.97 to 1.00 (mean 0.98) and the GRU 1.00 on all five, beating the RNN by 81 to 87 points per seed, a mean margin of 83. When memory must survive interference, the gated cell state carries it.""")
+md.append(
+    r"""The split is clean on every seed. The RNN sits at 0.13 to 0.18, the predict-the-mean floor, so it never isolates the two marked values across the gap. The LSTM scores 0.97 to 1.00 (mean 0.98) and the GRU 1.00 on all five, beating the RNN by 81 to 87 points per seed, a mean margin of 83. When memory must survive interference, the gated cell state carries it."""
+)
 
 md.append(r"""## 6. Tuning
 
 Sequence length is the dial. Sweep the RNN and LSTM over lengths 10, 30 and 50, three seeds each.""")
 
 code.append(
-    '''for seq_len in (10, 30, 50):
+    """for seq_len in (10, 30, 50):
     for kind in ("rnn", "lstm"):
         accs = [fit_adding(kind, seq_len, s) for s in (0, 1, 2)]
-        print(f"length {seq_len:>2}, {kind:>4}: {np.round(accs, 3)}, mean {np.mean(accs):.3f}")'''
+        print(f"length {seq_len:>2}, {kind:>4}: {np.round(accs, 3)}, mean {np.mean(accs):.3f}")"""
 )
 
 md.append(r"""Even at length 10 the RNN reaches only 0.59 while the LSTM is at 1.00. By length 30 the RNN is at the 0.15 floor and stays there at 50; the LSTM holds above 0.97 throughout. The gap is the vanishing gradient, not a tuning artefact.
@@ -207,24 +211,33 @@ md.append(r"""Even at length 10 the RNN reaches only 0.59 while the LSTM is at 1
 The gates cost parameters. Each gate is another weight matrix, so at the same hidden size the LSTM is four times the RNN and the GRU three times.""")
 
 code.append(
-    '''for kind in ("rnn", "gru", "lstm"):
+    """for kind in ("rnn", "gru", "lstm"):
     counts = [sum(p.numel() for p in AddNet(kind, n_hidden=h).rnn.parameters()) for h in (16, 32, 64)]
-    print(f"{kind:>4} parameters at hidden size 16, 32, 64: {counts}")'''
+    print(f"{kind:>4} parameters at hidden size 16, 32, 64: {counts}")"""
 )
 
-md.append(r"""At hidden size 32 the RNN has 1,152 recurrent parameters, the GRU 3,456 and the LSTM 4,608. That extra cost buys a model that still works at length 50 where the RNN cannot start. Section 06 runs on much longer sequences, where this gap is the whole game.""")
+md.append(
+    r"""At hidden size 32 the RNN has 1,152 recurrent parameters, the GRU 3,456 and the LSTM 4,608. That extra cost buys a model that still works at length 50 where the RNN cannot start. Section 06 runs on much longer sequences, where this gap is the whole game."""
+)
 
 # interleave: md0, code0, md1, code1, md2, code2, md3, code3, md4, code4, md5(results),
 # md6(tuning), code5(tuning), md7(what breaks results), code6(params), md8(close)
 order = [
-    ("md", 0), ("code", 0),
-    ("md", 1), ("code", 1),
-    ("md", 2), ("code", 2),
-    ("md", 3), ("code", 3),
-    ("md", 4), ("code", 4),
+    ("md", 0),
+    ("code", 0),
+    ("md", 1),
+    ("code", 1),
+    ("md", 2),
+    ("code", 2),
+    ("md", 3),
+    ("code", 3),
+    ("md", 4),
+    ("code", 4),
     ("md", 5),
-    ("md", 6), ("code", 5),
-    ("md", 7), ("code", 6),
+    ("md", 6),
+    ("code", 5),
+    ("md", 7),
+    ("code", 6),
     ("md", 8),
 ]
 
@@ -246,7 +259,9 @@ for n, (kind, i) in enumerate(order):
 
 nb = {
     "cells": cells,
-    "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"}},
+    "metadata": {
+        "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"}
+    },
     "nbformat": 4,
     "nbformat_minor": 5,
 }
