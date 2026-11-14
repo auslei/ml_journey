@@ -68,16 +68,24 @@ def generate(
     Greedy decoding (``do_sample=False``) makes the output deterministic for a given
     seed. Special tokens are stripped from the decoded string.
     """
+    import torch
+
     set_seed(seed)
     logger.info("Generating up to %d new tokens", max_new_tokens)
 
     encoded = tokenizer(prompt, return_tensors="pt")
     input_ids = encoded["input_ids"].to(model.device)
-    output_ids = model.generate(
-        input_ids=input_ids,
-        max_new_tokens=max_new_tokens,
-        do_sample=False,
-        pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
-    )
+    was_training = model.training
+    model.eval()
+    try:
+        with torch.no_grad():
+            output_ids = model.generate(
+                input_ids=input_ids,
+                max_new_tokens=max_new_tokens,
+                do_sample=False,
+                pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
+            )
+    finally:
+        model.train(was_training)
     text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
     return text

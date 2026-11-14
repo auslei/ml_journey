@@ -109,7 +109,7 @@ def load_base(model_id: str, device: str | None = None) -> tuple[Any, Any]:
             model = AutoModelForCausalLM.from_pretrained(model_id, dtype="auto")
             model = model.to(dtype=torch.float32)
             tokenizer = AutoTokenizer.from_pretrained(model_id)
-        except (OSError, ConnectionError, ValueError) as error:
+        except (OSError, ConnectionError) as error:
             logger.warning(
                 "Could not load %s (%s); falling back to the tiny offline model",
                 model_id,

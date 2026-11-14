@@ -36,12 +36,26 @@ def _pair_counts(vocab: dict[str, int]) -> Counter:
 
 
 def _merge_pair(pair: tuple[str, str], vocab: dict[str, int]) -> dict[str, int]:
-    """Fuse ``pair`` wherever it appears adjacently in every vocab entry."""
-    target = " ".join(pair)
-    replacement = "".join(pair)
+    """Fuse ``pair`` wherever it appears adjacently in every vocab entry.
+
+    Works on the symbol list, comparing whole symbols, so a merge never matches
+    inside an already-fused multi-character symbol. This is the same scan ``encode``
+    runs, which keeps training and encoding on one algorithm.
+    """
+    left, right = pair
     merged: dict[str, int] = {}
     for word, freq in vocab.items():
-        merged[word.replace(target, replacement)] = freq
+        symbols = word.split()
+        out: list[str] = []
+        index = 0
+        while index < len(symbols):
+            if index < len(symbols) - 1 and symbols[index] == left and symbols[index + 1] == right:
+                out.append(left + right)
+                index += 2
+            else:
+                out.append(symbols[index])
+                index += 1
+        merged[" ".join(out)] = freq
     return merged
 
 

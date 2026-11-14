@@ -29,3 +29,38 @@ QUESTIONS.md under "Build-time questions" and stop the build.
 - `intuition_test.ipynb` uses a per-question predict/run/answer layout rather than section 06's
   pooled-answers-at-end. Both match the house "questions first, predictions, answers after"
   rule; the per-question form keeps each check next to its question.
+
+## Review round 1
+
+Cursor and Codex review of PR #2. All items addressed, no pushback.
+
+Should-fix:
+1. intuition Q2 now encodes per word (`sum` of `bpe.encode(w, merges)`), matching the
+   word-level API from notebook 01. words 4, subwords 18, chars 25: BPE sits between.
+2. `evaluate.generate` sets `model.eval()` and runs under `torch.no_grad()`, restoring the
+   prior training mode in a `finally`. Greedy decode is now truly eval behaviour.
+3. `test_evaluate` no longer decodes then re-encodes. Split into a string check and a
+   token-budget check on `output_ids.shape[1] - input_ids.shape[1]`.
+4. `07_llm/conftest.py` sets `collect_ignore_glob` for `*.ipynb` and `tests/*` when
+   `transformers`/`peft` are absent, so bare `uv run pytest` stays green on a core install.
+5. intuition Q5 answer drops the run-specific "511 to 333" figures; points at the printed
+   before/after values and says perplexity falls by a clear margin.
+6. notebook 02 datasets `except` drops `ValueError`, catching `(OSError, ImportError)` only.
+
+Nits:
+- intuition Q1 answer tied to the printed `pieces` (still `ne`, `wer`, end marker on this run).
+- `model.load_base` hub `except` drops `ValueError`, so a bad config no longer silently falls
+  back to the tiny model.
+- train.py `eval_strategy`: chose the simpler path, notebook 04 now states the smoke run does
+  not score the validation split and that the before/after perplexity is the evidence.
+- root README testing block mentions `--extra torch --extra llm --extra nlp` for the full suite.
+- intuition imports cell drops `warnings.filterwarnings("ignore")`.
+
+Codex inline:
+A. bpe `_merge_pair` rewritten to scan the symbol list with whole-symbol comparison (same scan
+   as `encode`), so a merge never matches inside a fused symbol. Regression test on
+   `['ccaacc', 'cccabcaa']`: with 100 merges each word now fuses to one token and round-trips;
+   the buggy version left `ccaacc` at five tokens.
+B. notebook 04 real-run path formats the prompt with `real_tok.apply_chat_template(...,
+   add_generation_prompt=True)` when the tokenizer has a chat template, matching how
+   `format_instruct` built the training data; the plain prompt stays for the fallback tokenizer.

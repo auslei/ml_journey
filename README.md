@@ -55,10 +55,13 @@ UV_PROJECT_ENVIRONMENT=.venv-tf uv run --extra torch --extra tf pytest 05_deep_l
 Notebooks are tested by running them end to end.
 
 ```
-uv run pytest                # about 6 minutes with section 05
+uv run pytest                                         # core sections, about 6 minutes with section 05
+uv run --extra torch --extra llm --extra nlp pytest   # also run sections 06 and 07
 uv run ruff check .
 uv run ruff format --check .
 ```
+
+Sections 06 and 07 are skipped without their extras, so the bare `uv run pytest` stays green on a core install.
 
 Shared code lives in `common/` (datasets, plotting, deep learning helpers) and has its own unit tests. Sections talk to each other only through `common/`.
 
