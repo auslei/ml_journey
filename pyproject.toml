@@ -16,6 +16,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+nlp = [
+    "gensim>=4.4.0",
+    "nltk>=3.10.4",
+    "spacy>=3.8.18",
+]
 torch = [
     "torch",
     "torchvision",
