@@ -32,7 +32,7 @@ Each section holds:
 
 - Use `uv` for everything (`uv add`, `uv lock`, `uv run`). No bare `pip install`.
 - Python 3.12. The local default is newer and the TensorFlow/Torch wheels lag behind it.
-- One `pyproject.toml` with optional extras: `torch`, `tf`, `llm`. Core sections must run without the heavy extras.
+- One `pyproject.toml` with optional extras: `torch`, `tf`, `llm`, `nlp`. Core sections must run without the heavy extras.
 - TensorFlow cannot share an environment with `umap`. Install the `tf` extra only in a second env (`UV_PROJECT_ENVIRONMENT=.venv-tf`). The `05_deep_learning` appendix is the only user.
 - Keep pinned versions in `uv.lock` so the notebooks still run in a year.
 

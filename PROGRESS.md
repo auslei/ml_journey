@@ -25,7 +25,7 @@ Full suite: section 06 suite 7 passed, ruff clean. Full suite 101/103 passed (2 
 - Keras 3 is the teaching API (runs on the PyTorch backend). Native PyTorch where the training loop is the lesson, and for NLP and LLM. TensorFlow-only material (`tf.data`, `GradientTape`) goes in an appendix at the end of section 05. Confirm Keras 3 backend support in the installed version before pinning.
 - TensorFlow cannot share an environment with `umap` (numba and TF load conflicting LLVM copies, so `import umap` aborts the kernel once TF is installed). The appendix runs in a second env: `UV_PROJECT_ENVIRONMENT=.venv-tf uv run --extra torch --extra tf pytest 05_deep_learning/appendix`. `05_deep_learning/conftest.py` skips it when TF is absent.
 - GPU: `common.dl.get_device()` picks cuda, then mps, then cpu. Prose numbers in 05 were read off CUDA runs and shift by a few points on CPU.
-- Python 3.12, `uv`, one `pyproject.toml`. `umap-learn` is a core dependency. Optional extras: `torch`, `tf`, `llm`.
+- Python 3.12, `uv`, one `pyproject.toml`. `umap-learn` is a core dependency. Optional extras: `torch`, `tf`, `llm`, `nlp`.
 - `common/` is an installed package. Use `from common.datasets import ...` and `from common.plotting import ...`. Datasets come from sklearn built-ins, seeded generators, or download-and-cache into the gitignored `data/` folder.
 - Notebooks are committed with outputs stripped (`nbstripout`). Each stays under 30KB.
 - Prose depth is one markdown cell per code cell, about 500 words per notebook. The user said this is fine for now. A deeper blog-quality pass on 01 and 02 can wait for the end.
@@ -53,8 +53,8 @@ Full suite: section 06 suite 7 passed, ruff clean. Full suite 101/103 passed (2 
 cd /Users/auslei/dev/anthonysun.ai/ml_journey
 git checkout main && git pull
 git checkout -b section-07-llm
-uv sync --extra torch
-uv run --extra torch pytest 06_nlp/
+uv sync --extra torch --extra nlp
+uv run --extra torch --extra nlp pytest 06_nlp/
 ```
 
 Source backup is at `/Volumes/SSD_SAM/github_backup/` (external SSD — must be mounted).
