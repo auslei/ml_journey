@@ -79,6 +79,8 @@ def draw_computation_graph(
     example a local derivative). ``highlight`` names nodes to fill in a warm colour,
     used to pick out the path a gradient flows back along.
     """
+    if not nodes:
+        raise ValueError("`nodes` is empty: nothing to draw")
     unknown = {n for e in edges for n in e} - set(nodes)
     if unknown:
         raise ValueError(f"edges reference nodes not in `nodes`: {sorted(unknown)}")

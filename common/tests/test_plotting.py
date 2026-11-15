@@ -85,3 +85,10 @@ def test_computation_graph_rejects_unknown_edge_node() -> None:
 
     with pytest.raises(ValueError, match="not in"):
         draw_computation_graph({"a": (0, 0)}, [("a", "b")])
+
+
+def test_computation_graph_rejects_empty_nodes() -> None:
+    from common.plotting import draw_computation_graph
+
+    with pytest.raises(ValueError, match="empty"):
+        draw_computation_graph({}, [])
