@@ -39,3 +39,30 @@ Minor assumptions recorded during the build. Major concerns go to QUESTIONS.md u
 - 06/05 `sentiment_classification` section 7: "a GRU ... trains about 20% faster here" where no
   GRU is built. Pre-existing claim in body prose. Flagged for a future voice pass, not changed
   in this motivation pass.
+
+## Fix pass 1 (PR #4 review)
+
+Addressed the Cursor, Codex and Copilot findings:
+
+- BLOCKER 05/09 `cnn_mnist`: cell 0 had pasted `## 1. Intuition` / `## 2. Maths` /
+  `## 3. From scratch` after the Why block, duplicating cell 2 verbatim. Stripped cell 0 back to
+  H1 + Why. Also folded the pre-Why "An MLP treats an image as 784 unrelated numbers" opener into
+  one sentence of Why (the shuffle-the-pixels point), so Why is the single motivation.
+- SHOULD-FIX dedup (Why repeated the Intuition image near word-for-word): 04/01 `kmeans` (flags in
+  a field), 03/22 `svm` (widest road / support vectors), 03/26 `scorecard` (Age 25-34 earns 12,
+  utilisation over 80% costs 30). Image/example kept in Intuition; Why reworked to payoff and knobs.
+- NIT 05/03 `optimisers`: Why used a shopping-trolley valley, Intuition a ball in a valley. Gave
+  Why a distinct picture (a trolley with one stiff wheel that veers), leaving the valley to Intuition.
+- Codex 02/02 `bayes`: qualified "a 1% base rate keeps the answer low no matter how good the test".
+  Now ties the low answer to the example's 9% false-positive rate (answer near 9%), and notes a far
+  lower false-positive rate would let a positive overcome the small prior. Numbers are the notebook's.
+- NIT 06 em dashes in code: removed from print strings / titles / one comment in 04, 05, 06. En
+  dashes in numeric ranges (150-200, 1-2, 83-85) left as-is per the house rule the reviewer agreed with.
+- Copilot `common/plotting.py::draw_computation_graph`: added an up-front `ValueError` when `nodes`
+  is empty (previously `min()`/`max()` crashed on an empty `nodes` with empty `edges`), plus a test.
+
+### Pushed back
+
+- NIT 05/09 `plot_filter_grid` returns a `Figure` with no optional `ax`. Left as-is. It draws a grid
+  of subplots, so a single caller-supplied `ax` has no meaning, and the plan's review refinement 3
+  explicitly allows returning the `Figure`. The reviewer agreed it is acceptable.
