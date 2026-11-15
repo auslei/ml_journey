@@ -35,7 +35,13 @@ Section 06 also needs the spaCy English model and a few NLTK corpora. Install th
 
 Section 07 runs offline by default on a tiny GPT-2 built from a small config, so the tests and notebooks need no network. A real fine-tune is opt-in: set `LLM_BASE_MODEL=Qwen/Qwen2.5-0.5B-Instruct` to download Qwen (about 1GB) into the Hugging Face cache and run the same pipeline on MPS or CPU. The `llm` extra is independent of the `nlp` extra, and no TensorFlow is involved.
 
-Open the notebooks in VS Code or any Jupyter front end, using the `.venv` kernel (`ipykernel` is installed).
+To view and run the notebooks, launch JupyterLab (installed by `uv sync`):
+
+```
+uv run jupyter lab
+```
+
+Or open them in VS Code or any other Jupyter front end, using the `.venv` kernel (`ipykernel` is installed).
 
 Datasets come from scikit-learn, seeded generators, or a download that is cached in the gitignored `data/` folder. The first run of the deep learning notebooks downloads MNIST and CIFAR-10 (about 170MB for CIFAR-10).
 

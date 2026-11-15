@@ -32,7 +32,13 @@ tf = ["tensorflow"]
 llm = ["transformers", "peft", "datasets", "accelerate"]
 
 [dependency-groups]
-dev = ["nbmake", "nbstripout", "pytest", "ruff"]
+dev = [
+    "jupyterlab>=4.6.6",
+    "nbmake",
+    "nbstripout",
+    "pytest",
+    "ruff",
+]
 
 [tool.ruff]
 line-length = 100
