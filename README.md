@@ -4,6 +4,12 @@ A single learning path from linear algebra to LLM fine-tuning. It is my personal
 
 Every notebook follows the same order: intuition, maths, cost function, a from-scratch version, the library version, tuning, and what breaks. Prose is short. The code runs end to end from a clean checkout, every random call is seeded, and outputs are stripped before commit.
 
+## Why this exists
+
+I had more than 80 repositories built up over years of learning and taking notes on machine learning. I tried to clean them up by hand a couple of times and gave up each time, there was simply too much of it. Agentic programming finally made it practical. I used Claude to work through the mess and pull it into one path, and ml_journey is the result.
+
+We hand more of the coding to AI agents now, but the core concepts still matter. You need them at work to guide your agent buddies, and you need them for your own knowledge and for the hobby of it.
+
 ## Roadmap
 
 | Section | Topic | State |
