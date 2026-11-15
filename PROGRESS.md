@@ -36,7 +36,8 @@ Section 07 gates (branch `llm07261114`): `pytest 07_llm/ common/` 99 passed offl
 ## Next steps
 
 1. Done: `polish261114` merged via PR #3 (01/02 depth pass, section 05 trimmed toward 500 words, notebook 11 on the adding problem with the LSTM beating the vanilla RNN on all five seeds, mean margin 83.1 points).
-2. Optional later work: a voice read-through of sections 03, 04, 06 and 07 notebook prose (this pass covered their READMEs, not every notebook), and any blog-post-specific editing as the posts are written.
+2. In review: `motivation261115` (PR open, awaiting Anthony). Every one of the 47 content notebooks now carries a `## Why this matters` opener (STRONG openers retitled/reworked in place, four thin ones newly written), plain-English parameter glosses where a beginner stalls, and a comment standard on every sample-data cell. Added `common.plotting.draw_computation_graph` plus seven in-notebook diagram `def`s (loss-per-LR, LLN convergence, learned-filter grid, trial scatter, token-count bar, BoW-vs-LSTM bar, before/after perplexity bar). `07_llm/llm_finetune/model.py::_corpus_text` documented. Full suite 162 passed, ruff clean.
+3. Optional later work: a voice read-through of the body prose (not just openers) of sections 03, 04, 06 and 07, and any blog-post-specific editing as the posts are written. Two pre-existing body claims to revisit in that pass: 06/05's "GRU trains about 20% faster here" (no GRU is built) and confirming 05/11's per-seed margin numbers still print from a fresh run.
 
 ## Lessons for the next run
 
