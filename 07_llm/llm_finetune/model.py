@@ -25,7 +25,17 @@ _TINY_N_POSITIONS = 256
 
 
 def _corpus_text() -> list[str]:
-    """Return the demo corpus as plain training strings to seed the tiny tokenizer."""
+    """Return the demo corpus as plain training strings to seed the tiny tokenizer.
+
+    Returns a ``list[str]``, one line per instruction, non-empty input, and output across
+    all demo records.
+    """
+    # Flatten each instruct record into its raw text fields. A BPE tokenizer learns its
+    # vocabulary from whatever text it sees, so feeding it the exact words this corpus uses
+    # (Marru, Veln, Oska, and the rest) means those words get clean token ids instead of
+    # being split into stray bytes. "Seed the tokenizer" means prime it on this text so the
+    # tiny model trains and generates over the same vocabulary the corpus is written in.
+    # input is skipped when empty so blank fields do not pad the training text with nothing.
     lines: list[str] = []
     for record in data.demo_corpus():
         lines.append(record["instruction"])
